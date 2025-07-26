@@ -15,7 +15,7 @@ class YaksokiApp extends ConsumerWidget {
       theme: ThemeData(
         useMaterial3: true,
         primarySwatch: Colors.teal,
-        fontFamily: 'Maplestory', // ✅ 앱 전체 폰트 적용
+        fontFamily: 'Pretendard', // ✅ 앱 전체 폰트 적용
       ),
     );
   }

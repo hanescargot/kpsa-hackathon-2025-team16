@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'; // ConsumerWidget을 �
 import 'package:go_router/go_router.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../../util.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeColor = const Color(0xFFFF6B6B);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -25,7 +24,7 @@ class LoginScreen extends ConsumerWidget {
                   icon: const Icon(Icons.close, color: Colors.white),
                   onPressed: () => Navigator.pop(context),
                   style: IconButton.styleFrom(
-                    backgroundColor: themeColor,
+                    backgroundColor: kColorPrimary,
                     padding: const EdgeInsets.all(10),
                   ),
                 ),
@@ -40,16 +39,34 @@ class LoginScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 32),
-                    const Text(
-                      '로그인',
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/logo/logo_rmbg.png', height: 140),
+                        Text(
+                          '약속이',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'MapleStory',
+                            color: kColorPrimary,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 32),
-
-                    Image.asset(
-                      'assets/images/pill.png',
-                      height: 100,
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        '복약, 혼자 하지 마세요. 함께 지키고, 함께 건강해지는 AI 복약 챌린지 플랫폼',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'MapleStory',
+                          color: Colors.black87,
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: 12),
 
                     const SizedBox(height: 32),
 
@@ -57,8 +74,13 @@ class LoginScreen extends ConsumerWidget {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.email_outlined),
                         labelText: '아이디',
-                        labelStyle: TextStyle(color: themeColor),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        labelStyle: TextStyle(
+                          color: kColorPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -68,8 +90,13 @@ class LoginScreen extends ConsumerWidget {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock_outline),
                         labelText: '비밀번호',
-                        labelStyle: TextStyle(color: themeColor),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        labelStyle: TextStyle(
+                          color: kColorPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
 
@@ -81,7 +108,7 @@ class LoginScreen extends ConsumerWidget {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
+                          backgroundColor: kColorPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -93,7 +120,7 @@ class LoginScreen extends ConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("로그인", style: TextStyle(color: Colors.white),),
+                            Text("로그인", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                             // SizedBox(width: 16),
                             // const Icon
                             //   (Icons.arrow_forward, color: Colors.white),
@@ -111,18 +138,30 @@ class LoginScreen extends ConsumerWidget {
 
                     TextButton(
                       onPressed: () {},
-                      child: const Text('비밀번호를 잊으셨나요?'),
+                      child: const Text(
+                        '비밀번호를 잊으셨나요?',
+                        style: TextStyle(color: Colors.black87),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('계정이 없으신가요? '),
+                        const Text(
+                          '계정이 없으신가요? ',
+                          style: TextStyle(color: Colors.black87),
+                        ),
                         TextButton(
                           onPressed: () {
                             // 회원가입 이동
                           },
-                          child: const Text('회원가입', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(
+                            '회원가입',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: kColorPrimary,
+                            ),
+                          ),
                         ),
                       ],
                     ),
