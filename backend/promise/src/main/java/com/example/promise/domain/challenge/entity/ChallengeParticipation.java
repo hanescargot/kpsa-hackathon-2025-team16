@@ -9,26 +9,24 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class ChallengeParticipation {
     @Id @GeneratedValue
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private NormalUser user;
 
     @ManyToOne
-    @JoinColumn(name = "challenge_group_id")
     private ChallengeGroup challengeGroup;
 
-    private Long currentPoint = 0L;
+    private int requiredDoseCount; // 사용자 복약 기준 (1~3)
 
-    private boolean isSuccess;  // 복약횟수 충족 여부
-    private boolean completed;  // 정산 완료 여부
+    private int takenCount; // 실제 복약한 횟수
+
+    private boolean isSuccess;
+
+    private boolean completed;
 }
 

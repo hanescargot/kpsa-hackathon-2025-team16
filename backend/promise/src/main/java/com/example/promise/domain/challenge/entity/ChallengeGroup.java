@@ -10,21 +10,16 @@ import java.time.LocalDate;
 
 @Entity
 @Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class ChallengeGroup {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     private Long id;
 
-    private LocalDate challengeDate; // ex. 2025-07-26
-    private int requiredDoseCount;   // ex. 3회 복용 기준
+    private LocalDate challengeDate; // 날짜 기준 단일 그룹
 
-    private Long totalPoint; // 참여자 수 * 100
+    private Long totalPoint; // 전체 배팅 포인트
 
     @Column(nullable = false)
     @Builder.Default
     private boolean isSettled = false;
-
 }

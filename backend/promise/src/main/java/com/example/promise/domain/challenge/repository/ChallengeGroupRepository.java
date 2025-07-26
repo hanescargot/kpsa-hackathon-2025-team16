@@ -7,6 +7,6 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroup, Long> {
-    Optional<ChallengeGroup> findByChallengeDateAndRequiredDoseCount(LocalDate date, int count);
-
+    Optional<ChallengeGroup> findByChallengeDate(LocalDate date);
 }
+

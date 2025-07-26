@@ -18,6 +18,7 @@ public class NormalUser extends BaseUser {
     private LocalDateTime sleepEndTime;
     private String mealTimes;
 
+    @Builder.Default
     private Long point = 0L;
 
 

@@ -1,5 +1,6 @@
 package com.example.promise.domain.medicationschedule.service;
 
+import com.example.promise.domain.challenge.service.ChallengeService;
 import com.example.promise.domain.medicationschedule.dto.MsDto;
 import com.example.promise.domain.medicationschedule.entity.MedicationSlot;
 import com.example.promise.domain.medicationschedule.entity.MedicationSlotMedicine;
@@ -30,6 +31,7 @@ public class MedicationSlotService {
     private final MedicationSlotMedicineRepository medicationSlotMedicineRepository;
     private final MedicationSlotRepository medicationSlotRepository;
     private final NormalUserRepository userRepository;
+    private final ChallengeService  challengeService;
     /**
      * 처방을 받아 현재 날짜 기준으로 복약 스케줄 생성
      */
@@ -107,6 +109,16 @@ public class MedicationSlotService {
         return 1; // 기본값: 하루 1회
     }
 
+    public int parseDurationDays(String usage) {
+        Pattern pattern = Pattern.compile("(\\d{1,4})일분");
+        Matcher matcher = pattern.matcher(usage);
+
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+
+        return 1;
+    }
 
     public List<LocalDate> getSlotDates(Long userId, int year, int month) {
         NormalUser user = userRepository.findById(userId)
@@ -142,8 +154,21 @@ public class MedicationSlotService {
     public void updateTakenStatus(Long slotId, boolean taken) {
         MedicationSlot slot = medicationSlotRepository.findById(slotId)
                 .orElseThrow(() -> new RuntimeException("Slot not found"));
+
         slot.setTaken(taken);
         slot.setTakenAt(taken ? LocalDateTime.now() : null);
+
+        // ✅ 복약 슬롯 완료 수 확인
+        NormalUser user = slot.getUser();
+        LocalDate date = slot.getDate();
+
+        List<MedicationSlot> slots = medicationSlotRepository.findByUserAndDate(user, date);
+        long completed = slots.stream().filter(s -> Boolean.TRUE.equals(s.getTaken())).count();
+
+        // ✅ 챌린지 참여 성공 여부 업데이트
+        challengeService.updateChallengeProgress(slot.getUser().getId(), slot.getDate());
     }
+
+
 
 }

@@ -88,23 +88,20 @@ public class OcrService {
         NormalUser user = normalUserRepository.findById(userId).get();
 
         Pharmacy pharmacy = pharmacyRepository.findByAddress(previewDto.getAddress())
-                .orElseGet(() -> {
-                    // 없으면 이름만 저장
-                    return pharmacyRepository.save(
-                            Pharmacy.builder()
-                                    .name(previewDto.getPharmacyName())
-                                    .address(previewDto.getAddress())
-                                    .build()
-                    );
-                });
+                .orElseGet(() -> pharmacyRepository.save(
+                        Pharmacy.builder()
+                                .name(previewDto.getPharmacyName())
+                                .address(previewDto.getAddress())
+                                .build()
+                ));
 
         Prescription prescription = prescriptionRepository.save(
                 Prescription.builder()
                         .user(user)
                         .hospitalName(previewDto.getPharmacyName())
-                        .prescribedAt(LocalDate.parse(previewDto.getPrescribedDate()))
-                        .doctorName(previewDto.getDoctorName())    // 🔹 저장
-                        .patientName(previewDto.getPatientName())  // 🔹 저장
+                        .prescribedAt(LocalDate.now()) // ✅ 오늘 날짜로 저장
+                        .doctorName(previewDto.getDoctorName())
+                        .patientName(previewDto.getPatientName())
                         .viaOcr(true)
                         .isVerified(false)
                         .pharmacy(pharmacy)
@@ -115,7 +112,7 @@ public class OcrService {
             Medicine medicine = medicineRepository.findByName(m.getName())
                     .orElseGet(() -> medicineRepository.save(new Medicine(m.getName())));
 
-            PrescriptionMedicine pm= prescriptionMedicineRepository.save(PrescriptionMedicine.builder()
+            PrescriptionMedicine pm = prescriptionMedicineRepository.save(PrescriptionMedicine.builder()
                     .prescription(prescription)
                     .medicine(medicine)
                     .usageDescription(m.getUsage())
@@ -125,16 +122,17 @@ public class OcrService {
 
             medicationSlotService.generateSlots(user, pm);
 
-            // 🔹 복약 챌린지 자동 참여 처리
-            int doseCount = medicationSlotService.parseDoseCount(m.getUsage());  // ex: 하루 3회라면 3
-            LocalDate date = prescription.getPrescribedAt(); // 조제일자 기준
+            int doseCount = medicationSlotService.parseDoseCount(m.getUsage());         // ex: 하루 3회
+            int durationDays = medicationSlotService.parseDurationDays(m.getUsage());   // ex: 7일분
 
-            // 참여 시 group이 생성되지 않았으면 자동 생성되고,
-            // 자동으로 1인당 100포인트 추가됨
-            challengeService.participate(userId, date, doseCount);
+            // ✅ 오늘 기준으로 복약 기간만큼 챌린지 참여
+            LocalDate startDate = LocalDate.now();                  // ✅ 오늘부터 시작
+            LocalDate endDate = startDate.plusDays(durationDays - 1);
 
+            for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                challengeService.autoParticipateIfNeeded(userId, date, doseCount);
+            }
         }
-
 
         return new ResultDto.OcrResultDto(true, "저장 성공", prescription.getId());
     }

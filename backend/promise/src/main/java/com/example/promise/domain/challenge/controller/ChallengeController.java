@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/challenges")
 @RequiredArgsConstructor
@@ -19,9 +18,10 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
 
-    @Operation(summary = "챌린지 자동 참여",
-            description = "특정 날짜(date)와 복약 횟수(doseCount)를 기준으로 해당 사용자(userId)가 챌린지에 참여합니다. " +
-                    "챌린지 그룹이 없으면 자동으로 생성되며, 사용자 1명당 100포인트가 자동 배팅됩니다.")
+    /**
+     * ✅ 챌린지 참여 (100포인트 배팅, doseCount는 유저 기준)
+     */
+    @Operation(summary = "챌린지 참여", description = "특정 날짜(date)에 복약 횟수(doseCount)를 입력하여 챌린지에 참여합니다. 1인당 100포인트 자동 배팅됩니다.")
     @PostMapping("/participate")
     public void participate(@RequestParam LocalDate date,
                             @RequestParam int doseCount,
@@ -29,30 +29,39 @@ public class ChallengeController {
         challengeService.participate(userId, date, doseCount);
     }
 
-    @Operation(summary = "일일 복약 성공 기록",
-            description = "해당 챌린지 참여(participationId)에 대해 복약 성공 여부를 기록합니다. takenCount가 복약 횟수 이상일 경우 성공 처리됩니다.")
+    /**
+     * ✅ 복약 성공 기록 (참여 ID 기준, takenCount 저장)
+     */
+    @Operation(summary = "복약 성공 기록", description = "참여 ID(participationId)에 대해 실제 복약 횟수(takenCount)를 저장합니다. 기준 이상이면 성공 처리됩니다.")
     @PostMapping("/record")
     public void record(@RequestParam Long participationId,
                        @RequestParam int takenCount) {
         challengeService.recordDailyChallenge(participationId, takenCount);
     }
 
-    @Operation(summary = "챌린지 포인트 정산",
-            description = "특정 날짜(date)와 복약 횟수(doseCount)를 기준으로 해당 챌린지 그룹의 성공자들을 계산하고 포인트를 정산합니다. 성공자는 그룹의 totalPoint를 나누어 갖습니다.")
+    /**
+     * ✅ 챌린지 수동 정산 (관리자/테스트용)
+     */
+    @Operation(summary = "챌린지 정산", description = "특정 날짜(date)의 챌린지를 정산합니다. 성공자들에게 포인트 분배가 이루어집니다.")
     @PostMapping("/settle")
-    public void settle(@RequestParam LocalDate date,
-                       @RequestParam int doseCount) {
-        challengeService.settle(date, doseCount);
+    public void settle(@RequestParam LocalDate date) {
+        challengeService.settle(date);
     }
 
-    @Operation(summary = "내 챌린지 정산 결과 조회",
-            description = "지정된 날짜(date)와 복약 횟수(doseCount)에 대해 내가 성공했는지, 포인트를 얼마나 받았는지 조회합니다.")
-    @GetMapping("/result")
-    public ChallengeResponseDto.MyChallengeResult getResult(@RequestParam LocalDate date,
-                                                            @RequestParam int doseCount,
-                                                            @Parameter(hidden = true) @AuthUser Long userId) {
-        return challengeService.getMyChallengeResult(userId, date, doseCount);
+    /**
+     * ✅ 내 챌린지 정산 결과 확인
+     */
+    @GetMapping("/summary/yesterday")
+    @Operation(summary = "어제 챌린지 요약 조회", description = "어제 챌린지 결과(복약 성공 여부, 받은 포인트, 누적 포인트)를 조회합니다.")
+    public ChallengeResponseDto.MyChallengeSummary getYesterdaySummary(@Parameter(hidden = true) @AuthUser Long userId) {
+        return challengeService.getMyYesterdayChallengeSummary(userId);
     }
 
+
+    @GetMapping("/today")
+    @Operation(summary = "오늘 챌린지 참여 현황", description = "오늘 챌린지에 참여한 사용자 목록과 복약 성공률을 반환합니다.")
+    public ChallengeResponseDto.TodayChallengeInfo getTodayStatus() {
+        return challengeService.getTodayChallengeInfo(LocalDate.now());
+    }
 
 }
