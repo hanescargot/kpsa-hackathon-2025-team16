@@ -11,14 +11,12 @@ class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: 'http://3.35.14.212:8080',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 60),
+      receiveTimeout: const Duration(seconds: 60),
     ),
   );
 
-  Future<void> uploadOcrImage(File imageFile) async {
-        print("!!!!!! $globalAccessToken");
-
+  Future<Map<String, dynamic>> uploadOcrImage(File imageFile) async {
     try {
       final fileName = imageFile.path.split('/').last;
 
@@ -37,17 +35,19 @@ class ApiService {
           headers: {
             'Authorization': 'Bearer $globalAccessToken',
             'accept': '*/*',
-            // 'Content-Type': 생략
           },
         ),
       );
 
       print('✅ 업로드 성공: ${response.data}');
+      return response.data; // 🔥 이걸 꼭 추가!
     } catch (e) {
       print('❌ 업로드 실패: $e');
       rethrow;
     }
   }
+
+
   // Future<void> uploadOcrImage(File imageFile) async {
   //   try {
   //     print("!!!!!! $globalAccessToken");

@@ -351,7 +351,8 @@ class _PillChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       label: Text(name),
-      backgroundColor: Colors.blue.shade50,
+      // backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.white,
       labelStyle: const TextStyle(color: Colors.black),
     );
   }

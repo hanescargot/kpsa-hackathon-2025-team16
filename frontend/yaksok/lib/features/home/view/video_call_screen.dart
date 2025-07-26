@@ -193,7 +193,7 @@ class _VideoNotificationScreenState extends State<VideoNotificationScreen> {
 
     return SizedBox.expand(
       child: FittedBox(
-        fit: BoxFit.cover, // 화면을 가득 채우도록
+        fit: BoxFit.fitWidth, // 화면을 가득 채우도록
         child: SizedBox(
           width: size.width,
           height: size.height,

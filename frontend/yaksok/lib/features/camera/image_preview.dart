@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../models/ocr_model.dart';
 import '../../service/app_service.dart';
 import '../../util.dart';
 import 'camera_screen.dart';
+import 'ocr_result_screen.dart';
 
 class ImagePreviewScreen extends StatelessWidget {
   final File imageFile;
@@ -85,14 +87,81 @@ class ImagePreviewScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () async {
-                          // File imageFile = File('/your/path/to/image.jpg'); // 카메라로 촬영한 이미지
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false, // 뒤로가기 방지
+                            builder: (context) => Dialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              backgroundColor: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const SizedBox(height: 12),
+                                    const CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    const Text(
+                                      "AI가 약봉투 정보를 분석 중입니다.",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        fontFamily: 'MapleStory',
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    const Text(
+                                      "최대 1분 정도 소요될 수 있습니다.",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black54,
+                                        fontFamily: 'MapleStory',
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
 
-                          final result = await ApiService().uploadOcrImage(imageFile);
 
-// 예시 출력
-//                           print(result['pharmacyName']);
-//                           print(result['medicines']);
+                          try {
 
+                            final result = await ApiService().uploadOcrImage(imageFile);
+
+                            if (context.mounted) {
+                              Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => OcrResultScreen(
+                                    result: OcrResult.fromJson(result),
+                                  ),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (context.mounted)
+                              Navigator.of(context).pop(); // 에러 시도 닫기
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('오류'),
+                                content: Text('처리 중 오류가 발생했어요\n\n$e'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: const Text('확인'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                         },
                         child: const Text(
                           '생성 시작',
