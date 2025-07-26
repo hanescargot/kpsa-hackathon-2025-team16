@@ -16,8 +16,8 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
     Optional<ChallengeParticipation> findByUserIdAndChallengeGroup(Long userId, ChallengeGroup group);
     List<ChallengeParticipation> findAllByUser(NormalUser user);
 
-    // 🔹 추가: 사용자 ID와 기간 조건으로 참여 기록 조회
-    List<ChallengeParticipation> findAllByUserIdAndChallengeGroup_StartDateLessThanEqualAndChallengeGroup_EndDateGreaterThanEqual(
-            Long userId, LocalDate endDate, LocalDate startDate
-    );
+//    // 🔹 추가: 사용자 ID와 기간 조건으로 참여 기록 조회
+//    List<ChallengeParticipation> findAllByUserIdAndChallengeGroup_StartDateLessThanEqualAndChallengeGroup_EndDateGreaterThanEqual(
+//            Long userId, LocalDate endDate, LocalDate startDate
+//    );
 }
