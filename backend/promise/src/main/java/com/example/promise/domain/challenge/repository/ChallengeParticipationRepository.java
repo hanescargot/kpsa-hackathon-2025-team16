@@ -9,5 +9,7 @@ import java.util.List;
 public interface ChallengeParticipationRepository extends JpaRepository<ChallengeParticipation, Long> {
     List<ChallengeParticipation> findAllByUserId(Long userId);
     List<ChallengeParticipation> findAllByChallengeGroup(ChallengeGroup group);
+    boolean existsByUserIdAndChallengeGroupId(Long userId, Long challengeGroupId);
+
 }
 

@@ -3,7 +3,8 @@ package com.example.promise.domain.user.service;
 
 
 import com.example.promise.domain.pharmacist.entity.Pharmacist;
-import com.example.promise.domain.pharmacy.repository.PharmacistRepository;
+import com.example.promise.domain.pharmacist.repository.PharmacistRepository;
+import com.example.promise.domain.pharmacy.repository.PharmacyRepository;
 import com.example.promise.domain.user.converter.AuthConverter;
 import com.example.promise.domain.user.dto.AuthRequestDTO;
 import com.example.promise.domain.user.dto.AuthResponseDTO;

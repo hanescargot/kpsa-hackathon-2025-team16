@@ -87,6 +87,10 @@ public class ChallengeService {
         if(userId == null)
             userId = request.getUserId();
 
+        boolean alreadyExists = participationRepository.existsByUserIdAndChallengeGroupId(userId, request.getChallengeGroupId());
+        if (alreadyExists)
+            return; // 🔒 중복 참여 방지
+
         NormalUser user = userRepository.findById(userId).orElse(null);
         ChallengeGroup group = challengeGroupRepository.findById(request.getChallengeGroupId()).orElseThrow();
 

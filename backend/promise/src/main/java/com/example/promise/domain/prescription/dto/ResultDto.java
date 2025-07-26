@@ -21,6 +21,7 @@ public class ResultDto {
         private String prescribedDate;
         private String doctorName;      // 🔹 조제약사
         private String patientName;     // 🔹 환자정보
+        private String address;
         private List<OcrMedicineDto> medicines;
 
         @Getter

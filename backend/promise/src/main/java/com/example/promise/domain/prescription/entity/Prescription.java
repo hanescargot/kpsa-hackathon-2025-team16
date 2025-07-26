@@ -1,6 +1,7 @@
 package com.example.promise.domain.prescription.entity;
 
 import com.example.promise.domain.pharmacist.entity.Pharmacist;
+import com.example.promise.domain.pharmacy.entity.Pharmacy;
 import com.example.promise.domain.user.entity.NormalUser;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,11 @@ public class Prescription {
     @ManyToOne
     @JoinColumn(name = "pharmacist_id")
     private Pharmacist pharmacist;
+
+    @ManyToOne
+    @JoinColumn(name = "pharmacy_id")
+    private Pharmacy pharmacy;
+
 
     private LocalDate prescribedAt;// 조제일자
     private Boolean viaOcr;

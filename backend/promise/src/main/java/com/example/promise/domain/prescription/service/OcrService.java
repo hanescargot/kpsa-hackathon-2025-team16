@@ -8,6 +8,8 @@ import com.example.promise.domain.medicationschedule.service.MedicationSlotServi
 import com.example.promise.domain.medicine.entity.Medicine;
 
 import com.example.promise.domain.medicine.repository.MedicineRepository;
+import com.example.promise.domain.pharmacy.entity.Pharmacy;
+import com.example.promise.domain.pharmacy.repository.PharmacyRepository;
 import com.example.promise.domain.prescription.dto.AiRequestDto;
 import com.example.promise.domain.prescription.dto.ResultDto;
 import com.example.promise.domain.prescription.entity.Prescription;
@@ -39,7 +41,7 @@ public class OcrService {
     private final NormalUserRepository normalUserRepository;
     private final MedicationSlotService medicationSlotService;
     private final ChallengeService challengeService;
-
+    private final PharmacyRepository pharmacyRepository;
 
     public ResultDto.OcrPreviewDto process(MultipartFile imageFile) throws IOException {
         List<String> ocrTexts = googleOcrService.extractTextFromImage(imageFile);
@@ -52,6 +54,8 @@ public class OcrService {
                 .build();
 
         String aiResponse = chatGPTService.chat(dto).getBody();
+      System.out.println("AI 응답 전체: " + aiResponse);
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array = mapper.readTree(aiResponse);
 
@@ -64,6 +68,7 @@ public class OcrService {
         String date = first.path("조제일자").asText();
         String doctor = first.path("조제약사").asText();       // 🔹 조제약사
         String patient = first.path("환자정보").asText();       // 🔹 환자정보
+        String address = first.path("약국주소").asText();
 
         List<ResultDto.OcrPreviewDto.OcrMedicineDto> medicineDtos = new ArrayList<>();
 
@@ -76,11 +81,23 @@ public class OcrService {
             ));
         }
 
-        return new ResultDto.OcrPreviewDto(pharmacy, date, doctor, patient, medicineDtos);
+        return new ResultDto.OcrPreviewDto(pharmacy, date, doctor, patient, address, medicineDtos);
     }
 
     public ResultDto.OcrResultDto saveAnalyzedData(ResultDto.OcrPreviewDto previewDto, Long userId) {
         NormalUser user = normalUserRepository.findById(userId).get();
+
+        Pharmacy pharmacy = pharmacyRepository.findByAddress(previewDto.getAddress())
+                .orElseGet(() -> {
+                    // 없으면 이름만 저장
+                    return pharmacyRepository.save(
+                            Pharmacy.builder()
+                                    .name(previewDto.getPharmacyName())
+                                    .address(previewDto.getAddress())
+                                    .build()
+                    );
+                });
+
         Prescription prescription = prescriptionRepository.save(
                 Prescription.builder()
                         .user(user)
@@ -90,6 +107,7 @@ public class OcrService {
                         .patientName(previewDto.getPatientName())  // 🔹 저장
                         .viaOcr(true)
                         .isVerified(false)
+                        .pharmacy(pharmacy)
                         .build()
         );
 
