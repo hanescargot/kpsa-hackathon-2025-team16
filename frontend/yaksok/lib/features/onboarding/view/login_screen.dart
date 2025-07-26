@@ -1,37 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // ConsumerWidget을 위한 import
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../../service/app_service.dart';
 import '../../../util.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin(BuildContext context) async {
+    try {
+      final result = await ApiService().login(
+        username: usernameController.text.trim(),
+        password: passwordController.text,
+      );
+
+      ref.read(authProvider.notifier).state = true;
+      context.go('/home');
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('로그인 실패: $e')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
-            // 닫기 버튼 (X)
-            // Align(
-            //   alignment: Alignment.topRight,
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(12),
-            //     child: IconButton(
-            //       icon: const Icon(Icons.close, color: Colors.white),
-            //       onPressed: () => Navigator.pop(context),
-            //       style: IconButton.styleFrom(
-            //         backgroundColor: kColorPrimary,
-            //         padding: const EdgeInsets.all(10),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
-            // 메인 로그인 UI
             Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -43,13 +58,20 @@ class LoginScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset('assets/logo/logo_rmbg.png', height: 140),
-                        Text(
-                          '약속이',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'MapleStory',
-                            color: kColorPrimary,
+                        InkWell(
+                          onTap: (){
+                            usernameController.text = "abcd@test.com";
+                            passwordController.text = "abcd1234";
+                            setState(() {});
+                          },
+                          child: Text(
+                            '약속이',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'MapleStory',
+                              color: kColorPrimary,
+                            ),
                           ),
                         ),
                       ],
@@ -60,17 +82,16 @@ class LoginScreen extends ConsumerWidget {
                         '복약, 혼자 하지 마세요. 함께 지키고, 함께 건강해지는 AI 복약 챌린지 플랫폼',
                         style: TextStyle(
                           fontSize: 12,
-                          fontWeight: FontWeight.normal,
                           fontFamily: 'MapleStory',
                           color: Colors.black87,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-
                     const SizedBox(height: 32),
 
+                    // 아이디 입력
                     TextField(
+                      controller: usernameController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.email_outlined),
                         labelText: '아이디',
@@ -85,7 +106,9 @@ class LoginScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 16),
 
+                    // 비밀번호 입력
                     TextField(
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock_outline),
@@ -113,29 +136,38 @@ class LoginScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () {
-                          ref.read(authProvider.notifier).state = true;
-                          context.go('/home');
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("로그인", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                            // SizedBox(width: 16),
-                            // const Icon
-                            //   (Icons.arrow_forward, color: Colors.white),
-                          ],
+                        onPressed: () => _handleLogin(context),
+                        child: const Text(
+                          "로그인",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
 
+                    const SizedBox(height: 12),
+
+                    // // 🧪 테스트 자동 입력 버튼
+                    // InkWell(
+                    //   onTap: () {
+                    //     usernameController.text = "abcd@test.com";
+                    //     passwordController.text = "abcd1234";
+                    //     setState(() {});
+                    //   },
+                    //   child: const Text(
+                    //     '🧪 테스트 계정 자동입력',
+                    //     style: TextStyle(
+                    //       color: Colors.blue,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+
                     const SizedBox(height: 16),
-
-                    // 소셜 로그인
                     Image.asset('assets/tr/sns_login.png'),
-
                     const SizedBox(height: 32),
-
                     TextButton(
                       onPressed: () {},
                       child: const Text(

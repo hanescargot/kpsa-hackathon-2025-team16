@@ -1,42 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final userInfoProvider = StateProvider<UserInfo?>((ref) => null);
-
-class UserInfo {
-  final String name;
-  final DateTime birth;
+class User {
+  final String id;
+  final String password;
+  final String birth;
   final String phone;
-  final int mealCount;
-  final List<TimeOfDay> mealTimes;
+  final String guardianPhone;
+  final String sleepTime;
+  final String morning;
+  final String lunch;
+  final String dinner;
 
-  UserInfo({
-    required this.name,
+  User({
+    required this.id,
+    required this.password,
     required this.birth,
     required this.phone,
-    required this.mealCount,
-    required this.mealTimes,
+    required this.guardianPhone,
+    required this.sleepTime,
+    required this.morning,
+    required this.lunch,
+    required this.dinner,
   });
-
-  UserInfo copyWith({
-    String? name,
-    DateTime? birth,
-    String? phone,
-    int? mealCount,
-    List<TimeOfDay>? mealTimes,
-  }) {
-    return UserInfo(
-      name: name ?? this.name,
-      birth: birth ?? this.birth,
-      phone: phone ?? this.phone,
-      mealCount: mealCount ?? this.mealCount,
-      mealTimes: mealTimes ?? this.mealTimes,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'UserInfo(name: $name, birth: $birth, phone: $phone, '
-        'mealCount: $mealCount, mealTimes: $mealTimes)';
-  }
 }

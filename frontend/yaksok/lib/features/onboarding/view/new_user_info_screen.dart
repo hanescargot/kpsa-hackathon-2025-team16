@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:yaksok/util.dart';
+import '../../../models/user_info_model.dart';
 import '../../../providers/user_provider.dart';
 
 class NewUserInfoScreen extends ConsumerStatefulWidget {
@@ -145,8 +146,21 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
                     ),
                   ),
                   onPressed: () {
-                    // ref.read(userInfoProvider.notifier).state = user;
-                    context.go('/home'); // 홈 화면으로 이동
+                    final user = User(
+                      id: idController.text.trim(),
+                      password: pwController.text,
+                      birth: birthController.text,
+                      phone: phoneController.text,
+                      guardianPhone: guardianController.text,
+                      sleepTime: sleepController.text,
+                      morning: morningTime,
+                      lunch: lunchTime,
+                      dinner: dinnerTime,
+                    );
+
+                    ref.read(userInfoProvider.notifier).state = user;
+                    context.go('/home');
+
                   },
                   child: const Text(
                     '회원가입',
