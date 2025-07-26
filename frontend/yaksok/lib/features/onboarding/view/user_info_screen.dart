@@ -16,7 +16,8 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
 
   DateTime? birthDate;
   int mealCount = 1;
-  List<TimeOfDay> mealTimes = [TimeOfDay.now()];
+  int mealStartHour = 8;
+  int mealEndHour = 20;
 
   Future<void> pickBirthDate() async {
     final date = await showDatePicker(
@@ -30,14 +31,36 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
     }
   }
 
-  Future<void> pickMealTime(int index) async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: mealTimes[index],
+  Widget buildHourRangeSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('식사 시간 구간 (1시간 단위)', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('$mealStartHour시'),
+            Expanded(
+              child: RangeSlider(
+                min: 0,
+                max: 23,
+                divisions: 23,
+                values: RangeValues(mealStartHour.toDouble(), mealEndHour.toDouble()),
+                labels: RangeLabels('$mealStartHour시', '$mealEndHour시'),
+                onChanged: (values) {
+                  setState(() {
+                    mealStartHour = values.start.round();
+                    mealEndHour = values.end.round();
+                  });
+                },
+              ),
+            ),
+            Text('$mealEndHour시'),
+          ],
+        ),
+      ],
     );
-    if (time != null) {
-      setState(() => mealTimes[index] = time);
-    }
   }
 
   @override
@@ -82,25 +105,12 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                 if (value != null) {
                   setState(() {
                     mealCount = value;
-                    mealTimes = List.generate(
-                      mealCount,
-                          (index) => mealTimes.length > index
-                          ? mealTimes[index]
-                          : TimeOfDay.now(),
-                    );
                   });
                 }
               },
             ),
-            const SizedBox(height: 12),
-            ...List.generate(mealCount, (index) {
-              final time = mealTimes[index];
-              return ListTile(
-                title: Text('식사 시간 ${index + 1}'),
-                subtitle: Text('${time.hour}시 ${time.minute}분'),
-                onTap: () => pickMealTime(index),
-              );
-            }),
+            const SizedBox(height: 24),
+            buildHourRangeSelector(),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
@@ -109,7 +119,10 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                   birth: birthDate ?? DateTime(2000, 1, 1),
                   phone: phoneController.text,
                   mealCount: mealCount,
-                  mealTimes: mealTimes,
+                  mealTimes: [
+                    TimeOfDay(hour: mealStartHour, minute: 0),
+                    TimeOfDay(hour: mealEndHour, minute: 0),
+                  ],
                 );
                 ref.read(userInfoProvider.notifier).state = user;
                 ScaffoldMessenger.of(context).showSnackBar(
