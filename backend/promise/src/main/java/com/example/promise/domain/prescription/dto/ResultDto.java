@@ -5,12 +5,36 @@ import com.example.promise.domain.prescription.entity.Prescription;
 import com.example.promise.domain.prescription.entity.PrescriptionMedicine;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 
 public class ResultDto {
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OcrPreviewDto {
+        private String pharmacyName;
+        private String prescribedDate;
+        private String doctorName;      // 🔹 조제약사
+        private String patientName;     // 🔹 환자정보
+        private List<OcrMedicineDto> medicines;
+
+        @Getter
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class OcrMedicineDto {
+            private String name;
+            private String usage;
+            private String effect;
+            private String caution;
+        }
+    }
+
+
 
     @Getter
     @AllArgsConstructor

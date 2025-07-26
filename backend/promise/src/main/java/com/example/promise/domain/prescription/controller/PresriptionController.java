@@ -39,11 +39,15 @@ public class PresriptionController {
     }
 
     @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "OCR 저장", description = "이미지를 OCR로 분석하여 처방 정보를 저장합니다.")
-    public ResponseEntity<ResultDto.OcrResultDto> upload(@RequestParam("file") MultipartFile file) throws IOException {
+    @Operation(summary = "OCR", description = "이미지를 OCR로 분석하여 처방 정보를 반환합니다.")
+    public ResponseEntity<ResultDto.OcrPreviewDto> upload(@RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(ocrService.process(file));
     }
 
+    @PostMapping("/save")
+    public ResponseEntity<ResultDto.OcrResultDto> save(@RequestBody ResultDto.OcrPreviewDto previewDto) {
+        return ResponseEntity.ok(ocrService.saveAnalyzedData(previewDto));
+    }
 
 
 }

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,62 +31,72 @@ public class OcrService {
     private final  PrescriptionRepository prescriptionRepository;
     private final PrescriptionMedicineRepository prescriptionMedicineRepository;
 
-    public ResultDto.OcrResultDto process(MultipartFile imageFile) throws IOException {
+    public ResultDto.OcrPreviewDto process(MultipartFile imageFile) throws IOException {
         List<String> ocrTexts = googleOcrService.extractTextFromImage(imageFile);
         String combinedText = String.join(" ", ocrTexts);
 
         AiRequestDto dto = AiRequestDto.builder()
-                .model("gpt-4") // 또는 gpt-3.5-turbo
+                .model("gpt-4")
                 .prompt(combinedText)
                 .temperature(0.3f)
                 .build();
 
-        // GPT 호출
         String aiResponse = chatGPTService.chat(dto).getBody();
-
-        // GPT 응답 파싱
         ObjectMapper mapper = new ObjectMapper();
         JsonNode array = mapper.readTree(aiResponse);
 
         if (!array.isArray() || array.size() == 0) {
-            return new ResultDto.OcrResultDto(false, "처방 정보 없음", null);
+            throw new IllegalArgumentException("AI 분석 결과가 비어 있음");
         }
 
-// 공통 정보 (첫 번째 요소 기준)
         JsonNode first = array.get(0);
         String pharmacy = first.path("약국명").asText();
         String date = first.path("조제일자").asText();
+        String doctor = first.path("조제약사").asText();       // 🔹 조제약사
+        String patient = first.path("환자정보").asText();       // 🔹 환자정보
 
-// 처방 저장 (한 번만!)
+        List<ResultDto.OcrPreviewDto.OcrMedicineDto> medicineDtos = new ArrayList<>();
+
+        for (JsonNode obj : array) {
+            medicineDtos.add(new ResultDto.OcrPreviewDto.OcrMedicineDto(
+                    obj.path("약이름").asText(),
+                    obj.path("복약안내").asText(),
+                    obj.path("효능").asText(),
+                    obj.path("부작용").asText()
+            ));
+        }
+
+        return new ResultDto.OcrPreviewDto(pharmacy, date, doctor, patient, medicineDtos);
+    }
+
+    public ResultDto.OcrResultDto saveAnalyzedData(ResultDto.OcrPreviewDto previewDto) {
         Prescription prescription = prescriptionRepository.save(
                 Prescription.builder()
-                        .hospitalName(pharmacy)
-                        .prescribedAt(LocalDate.parse(date))
+                        .hospitalName(previewDto.getPharmacyName())
+                        .prescribedAt(LocalDate.parse(previewDto.getPrescribedDate()))
+                        .doctorName(previewDto.getDoctorName())    // 🔹 저장
+                        .patientName(previewDto.getPatientName())  // 🔹 저장
                         .viaOcr(true)
                         .isVerified(false)
                         .build()
         );
 
-// 약별 반복 처리
-        for (JsonNode obj : array) {
-            String name = obj.path("약이름").asText();
-            String usage = obj.path("복약안내").asText();
-            String effect = obj.path("효능").asText();
-            String caution = obj.path("부작용").asText();
-
-            Medicine medicine = medicineRepository.findByName(name)
-                    .orElseGet(() -> medicineRepository.save(new Medicine(name)));
+        for (ResultDto.OcrPreviewDto.OcrMedicineDto m : previewDto.getMedicines()) {
+            Medicine medicine = medicineRepository.findByName(m.getName())
+                    .orElseGet(() -> medicineRepository.save(new Medicine(m.getName())));
 
             prescriptionMedicineRepository.save(PrescriptionMedicine.builder()
                     .prescription(prescription)
                     .medicine(medicine)
-                    .caution(caution)
-                    .usageDescription(usage)
-                    .effect(effect)
+                    .usageDescription(m.getUsage())
+                    .effect(m.getEffect())
+                    .caution(m.getCaution())
                     .build());
         }
 
-        return new ResultDto.OcrResultDto(true, "성공", null);
+        return new ResultDto.OcrResultDto(true, "저장 성공", prescription.getId());
     }
+
+
 
 }

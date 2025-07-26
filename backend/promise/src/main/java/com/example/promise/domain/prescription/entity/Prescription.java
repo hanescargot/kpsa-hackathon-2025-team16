@@ -29,4 +29,6 @@ public class Prescription {
 
     private String hospitalName;
     private String doctorName;
+    private String patientName;
+
 }
