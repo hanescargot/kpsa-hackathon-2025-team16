@@ -11,6 +11,8 @@ import com.example.promise.domain.prescription.entity.PrescriptionMedicine;
 import com.example.promise.domain.prescription.repository.PrescriptionMedicineRepository;
 import com.example.promise.domain.user.entity.NormalUser;
 import com.example.promise.domain.user.repository.NormalUserRepository;
+import com.example.promise.global.code.status.ErrorStatus;
+import com.example.promise.global.exception.GeneralException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -120,18 +124,71 @@ public class MedicationSlotService {
         return 1;
     }
 
-    public List<LocalDate> getSlotDates(Long userId, int year, int month) {
+    // MedicationSlotService.java
+    public MsDto.CalendarSummaryDto getMonthlyCalendarSummary(Long userId, int year, int month) {
         NormalUser user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        return medicationSlotRepository.findByUserAndDateBetween(user, start, end).stream()
-                .map(MedicationSlot::getDate)
-                .distinct()
-                .collect(Collectors.toList());
+        List<MedicationSlot> slots = medicationSlotRepository.findByUserAndDateBetween(user, start, end);
+        if (slots.isEmpty()) {
+            return MsDto.CalendarSummaryDto.builder()
+                    .dailyRates(List.of())
+                    .adherenceRate(0)
+                    .streakDays(0)
+                    .missedDays(0)
+                    .build();
+        }
+
+        Map<LocalDate, List<MedicationSlot>> groupedByDate = slots.stream()
+                .collect(Collectors.groupingBy(MedicationSlot::getDate));
+
+        List<MsDto.DailyAdherenceDto> dailyRates = new ArrayList<>();
+        int totalSlotCount = 0;
+        int takenSlotCount = 0;
+        int missedDays = 0;
+        int currentStreak = 0;
+        int maxStreak = 0;
+
+        // ❗ 실제 슬롯이 있는 날짜만 순회
+        List<LocalDate> datesWithSlots = groupedByDate.keySet().stream().sorted().toList();
+        for (LocalDate date : datesWithSlots) {
+            List<MedicationSlot> daySlots = groupedByDate.getOrDefault(date, List.of());
+            int dayTotal = daySlots.size();
+            int dayTaken = (int) daySlots.stream().filter(MedicationSlot::getTaken).count();
+
+            int adherence = (dayTotal == 0) ? 0 : (int) ((dayTaken * 100.0) / dayTotal);
+            if (dayTotal > 0 && dayTaken == 0) missedDays++;
+
+            if (dayTotal > 0 && dayTaken == dayTotal) {
+                currentStreak++;
+                maxStreak = Math.max(maxStreak, currentStreak);
+            } else {
+                currentStreak = 0;
+            }
+
+            dailyRates.add(MsDto.DailyAdherenceDto.builder()
+                    .date(date)
+                    .adherenceRate(adherence)
+                    .build());
+
+            totalSlotCount += dayTotal;
+            takenSlotCount += dayTaken;
+        }
+
+        int totalRate = totalSlotCount == 0 ? 0 : (int) ((takenSlotCount * 100.0) / totalSlotCount);
+
+        return MsDto.CalendarSummaryDto.builder()
+                .dailyRates(dailyRates)
+                .adherenceRate(totalRate)
+                .missedDays(missedDays)
+                .streakDays(maxStreak)
+                .build();
     }
+
+
 
     public MsDto.DailySlotResponse getSlotsByDate(Long userId, LocalDate date) {
         NormalUser user = userRepository.findById(userId)

@@ -25,8 +25,9 @@ public class MedicationScheduleController {
             @RequestParam int year,
             @RequestParam int month
     ) {
-        return ResponseEntity.ok(medicationSlotService.getSlotDates(userId, year, month));
+        return ResponseEntity.ok(medicationSlotService.getMonthlyCalendarSummary(userId, year, month));
     }
+
 
     // 2. 일별 상세 스케줄 조회
     @GetMapping("/day")
