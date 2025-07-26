@@ -2,11 +2,13 @@ package com.example.promise.domain.user.service;
 
 
 
+import com.example.promise.domain.pharmacist.entity.Pharmacist;
+import com.example.promise.domain.pharmacy.repository.PharmacistRepository;
 import com.example.promise.domain.user.converter.AuthConverter;
 import com.example.promise.domain.user.dto.AuthRequestDTO;
 import com.example.promise.domain.user.dto.AuthResponseDTO;
-import com.example.promise.domain.user.entity.User;
-import com.example.promise.domain.user.repository.UserRepository;
+import com.example.promise.domain.user.entity.NormalUser;
+import com.example.promise.domain.user.repository.NormalUserRepository;
 import com.example.promise.global.code.status.ErrorStatus;
 import com.example.promise.global.exception.GeneralException;
 import com.example.promise.global.security.TokenProvider;
@@ -21,19 +23,23 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final NormalUserRepository normalUserRepository;
+    private final PharmacistRepository pharmacistRepository;
     private final TokenProvider tokenProvider;
-
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthResponseDTO.SignResponseDTO signUp(User user) {
-        validatePassword(user.getPassword()); // 비밀번호 검증
-
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        userRepository.save(user);
-
+    public AuthResponseDTO.SignResponseDTO signUpUser(NormalUser user) {
+        validatePassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        normalUserRepository.save(user);
         return AuthConverter.toSigninResponseDTO(user);
+    }
+
+    public AuthResponseDTO.SignResponseDTO signUpPharmacist(Pharmacist pharmacist) {
+        validatePassword(pharmacist.getPassword());
+        pharmacist.setPassword(passwordEncoder.encode(pharmacist.getPassword()));
+        pharmacistRepository.save(pharmacist);
+        return AuthConverter.toSigninResponseDTO(pharmacist);
     }
 
 
@@ -70,12 +76,12 @@ public class AuthService {
 
     //로그인
     public AuthResponseDTO.LoginResponseDTO login(AuthRequestDTO.LoginRequestDTO loginRequestDTO) {
-        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDTO.getEmail());
+        Optional<NormalUser> optionalUser = normalUserRepository.findByEmail(loginRequestDTO.getEmail());
         if (optionalUser.isEmpty()) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
-        User user = optionalUser.get();
+        NormalUser user = optionalUser.get();
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
             throw new GeneralException(ErrorStatus._UNAUTHORIZED);
         }
@@ -93,7 +99,7 @@ public class AuthService {
         String username = claims.getSubject();
 
         // 사용자 확인
-        User user = userRepository.findByName(username)
+        NormalUser user = normalUserRepository.findByName(username)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 새 토큰 발급

@@ -1,26 +1,26 @@
 package com.example.promise.domain.pharmacist.entity;
 
 import com.example.promise.domain.pharmacy.entity.Pharmacy;
-import com.example.promise.domain.user.entity.User;
-import jakarta.persistence.*;
+import com.example.promise.domain.user.entity.BaseUser;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
-@Getter @Setter
+@DiscriminatorValue("PHARMACIST")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Pharmacist {
-
-    @Id
-    private Long userId;
+@SuperBuilder
+public class Pharmacist extends BaseUser {
+    private String licenseNumber;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "pharmacy_id")
     private Pharmacy pharmacy;
+
+    private Long pharmacyVerify;
+
 }

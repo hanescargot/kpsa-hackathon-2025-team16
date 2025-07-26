@@ -1,7 +1,7 @@
 package com.example.promise.domain.prescription.entity;
 
 import com.example.promise.domain.pharmacist.entity.Pharmacist;
-import com.example.promise.domain.user.entity.User;
+import com.example.promise.domain.user.entity.NormalUser;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +20,7 @@ public class Prescription {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private NormalUser user;
 
     @ManyToOne
     @JoinColumn(name = "pharmacist_id")

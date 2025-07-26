@@ -1,7 +1,6 @@
 
 package com.example.promise.global.security;
 
-import com.example.promise.domain.user.entity.User;
 import com.example.promise.global.code.status.ErrorStatus;
 import com.example.promise.global.exception.GeneralException;
 import io.jsonwebtoken.Claims;
@@ -12,8 +11,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
