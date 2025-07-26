@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../util.dart';
+import 'medication_weekly_screen.dart';
 
 class MedicationCalendarScreen extends StatelessWidget {
   const MedicationCalendarScreen({super.key});
@@ -27,7 +28,10 @@ class MedicationCalendarScreen extends StatelessWidget {
                     children: [
                       Text(
                         '최순복',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text('함께하는 복약 캘린더'),
                     ],
@@ -46,9 +50,21 @@ class MedicationCalendarScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_left)),
-                  Text(currentMonth, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.chevron_right)),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.chevron_left),
+                  ),
+                  Text(
+                    currentMonth,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.chevron_right),
+                  ),
                 ],
               ),
             ),
@@ -57,11 +73,16 @@ class MedicationCalendarScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: const ['일', '월', '화', '수', '목', '금', '토']
-                  .map((day) => Expanded(
-                child: Center(
-                  child: Text(day, style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ))
+                  .map(
+                    (day) => Expanded(
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
 
@@ -82,11 +103,23 @@ class MedicationCalendarScreen extends StatelessWidget {
 
                   Widget? status;
                   if (day == 1 || day == 3) {
-                    status = const Icon(Icons.check, size: 14, color: Colors.green);
+                    status = const Icon(
+                      Icons.check,
+                      size: 14,
+                      color: Colors.green,
+                    );
                   } else if (day == 2) {
-                    status = const Icon(Icons.error, size: 14, color: Colors.red);
+                    status = const Icon(
+                      Icons.error,
+                      size: 14,
+                      color: Colors.red,
+                    );
                   } else if (day == 4) {
-                    status = const Icon(Icons.access_time, size: 14, color: Colors.blue);
+                    status = const Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: Colors.blue,
+                    );
                   }
 
                   String? percent;
@@ -96,32 +129,59 @@ class MedicationCalendarScreen extends StatelessWidget {
                     percent = '67%';
                   }
 
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: isToday ? Colors.blue.shade100 : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(isInMonth ? '$day' : '', style: const TextStyle(fontSize: 14)),
-                        if (status != null) status,
-                        if (percent != null)
-                          Text(
-                            percent,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: percent.contains('100') ? Colors.green : Colors.red,
-                            ),
+                  return GestureDetector(
+                    onTap: isInMonth
+                        ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const MedicationDetailScreen(
+                            date: '2025-07-04',
+                            dayOfWeek: '목',
+                            dayCount: 4,
                           ),
-                      ],
+                        ),
+                      );
+                    }
+                        : null,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isToday ? Colors.blue.shade100 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            isInMonth ? '$day' : '',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          if (status != null) status,
+                          if (percent != null)
+                            Text(
+                              percent,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: percent.contains('100')
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   );
+
                 },
               ),
             ),
-
+            Row(
+              children: [
+                SizedBox(width: 24),
+                Text("이번달 복약률", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87), ),
+              ],
+            ),
             // 통계
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -133,8 +193,16 @@ class MedicationCalendarScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
-                  _StatBlock(title: '85%', subtitle: 'Adherence', color: Colors.green),
-                  _StatBlock(title: '12', subtitle: 'Streak Days', color: Colors.blue),
+                  _StatBlock(
+                    title: '85%',
+                    subtitle: 'Adherence',
+                    color: Colors.green,
+                  ),
+                  _StatBlock(
+                    title: '12',
+                    subtitle: 'Streak Days',
+                    color: Colors.blue,
+                  ),
                   _StatBlock(title: '3', subtitle: 'Missed', color: Colors.red),
                 ],
               ),
@@ -163,7 +231,14 @@ class _StatBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(title, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style: TextStyle(
+            color: color,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Text(subtitle, style: const TextStyle(fontSize: 13)),
       ],
     );

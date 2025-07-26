@@ -11,7 +11,8 @@ class PrescriptionInfoPage extends StatelessWidget {
       'assets/imgs/p1.jpeg',
       'assets/imgs/p2.jpeg',
       'assets/imgs/p3.jpeg',
-      'assets/imgs/p4.jpeg'];
+      'assets/imgs/p4.jpeg',
+    ];
 
     final drugs = <PrescriptionDrug>[
       PrescriptionDrug(
@@ -23,19 +24,19 @@ class PrescriptionInfoPage extends StatelessWidget {
       PrescriptionDrug(
         name: '피디정',
         subtitle: '(부신피질호르몬)',
-        description: '부신피질호르몬제; 만성염증, 피부질환, 기침, 알레르기질환 등',
+        description: '만성염증, 피부질환, 알레르기질환 등',
         imagePath: randomImages[random.nextInt(randomImages.length)],
       ),
       PrescriptionDrug(
         name: '동구록시트로마이신',
-        subtitle: '(마이크로라이드계 항생제)',
+        subtitle: '(마크롤라이드계 항생제)',
         description: '각종 감염증 치료',
         imagePath: randomImages[random.nextInt(randomImages.length)],
       ),
       PrescriptionDrug(
         name: '모사피아정',
-        subtitle: '(위장운동조절 및 진경제)',
-        description: '소화관운동을 촉진시켜 오심, 구토, 가슴쓰림 등의 증상 치료',
+        subtitle: '(위장운동조절)',
+        description: '오심, 구토, 가슴쓰림 등 치료',
         imagePath: randomImages[random.nextInt(randomImages.length)],
       ),
       PrescriptionDrug(
@@ -46,83 +47,91 @@ class PrescriptionInfoPage extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('처방약 정보'),
-      ),
-      body: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+    return SizedBox(
+      height: 140,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: drugs.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 24),
         itemBuilder: (context, index) {
           final drug = drugs[index];
-          return _PrescriptionDrugItem(drug: drug);
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: _PrescriptionDrugCard(drug: drug),
+          );
         },
       ),
     );
   }
 }
 
-class _PrescriptionDrugItem extends StatelessWidget {
-  const _PrescriptionDrugItem({required this.drug});
-
+class _PrescriptionDrugCard extends StatelessWidget {
   final PrescriptionDrug drug;
+
+  const _PrescriptionDrugCard({required this.drug});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 약 이미지
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: Image.asset(
-            drug.imagePath,
-            width: 110,
-            height: 70,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
-              return Container(
-                width: 110,
-                height: 70,
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          // 이미지
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              drug.imagePath,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                width: 60,
+                height: 60,
                 color: Colors.grey.shade200,
                 alignment: Alignment.center,
-                child: const Icon(Icons.medication, size: 32, color: Colors.grey),
-              );
-            },
+                child: const Icon(Icons.medication, color: Colors.grey),
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        // 텍스트 정보
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              drug.name,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 4),
-            if (drug.subtitle.isNotEmpty)
-              Text(
-                drug.subtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.black87,
-                  fontSize: 14,
+          const SizedBox(width: 12),
+          // 텍스트
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  drug.name,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-            const SizedBox(height: 8),
-            Text(
-              drug.description,
-              style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
+                if (drug.subtitle.isNotEmpty)
+                  Text(
+                    drug.subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.black54,
+                      fontSize: 12,
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                Text(
+                  drug.description,
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-          ],
-        ),
-        Divider(),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

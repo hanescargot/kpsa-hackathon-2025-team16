@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yaksok/features/home/view/video_call_screen.dart';
+import 'package:yaksok/util.dart';
 import '../../../widgets/home_bottom_nav_bar.dart';
 import '../../my_page/prescription_info.dart';
 import '../../my_page/today_medication_info.dart';
@@ -53,7 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const backgroundColor = Color(0xFFFF6B6B);
+    final backgroundColor = kColorPrimary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
