@@ -17,6 +17,11 @@ public class MedicationSchedule {
     @Id @GeneratedValue
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private NormalUser user;
+
+
     @ManyToOne
     private PrescriptionMedicine prescriptionMedicine;
 

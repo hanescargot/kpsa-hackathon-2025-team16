@@ -3,7 +3,9 @@ package com.example.promise.domain.prescription.controller;
 import com.example.promise.domain.prescription.dto.ResultDto;
 import com.example.promise.domain.prescription.service.GoogleOcrService;
 import com.example.promise.global.ApiResponse;
+import com.example.promise.global.auth.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -39,14 +41,14 @@ public class PresriptionController {
     }
 
     @PostMapping(value = "/ocr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "OCR", description = "이미지를 OCR로 분석하여 처방 정보를 반환합니다.")
-    public ResponseEntity<ResultDto.OcrPreviewDto> upload(@RequestParam("file") MultipartFile file) throws IOException {
+    @Operation(summary = "OCR", description = "이미지를 OCR로 분석하여 처방 정보를 반환합니다. 토큰 필요")
+    public ResponseEntity<ResultDto.OcrPreviewDto> upload(@RequestParam("file") MultipartFile file, @Parameter(hidden = true) @AuthUser Long userId) throws IOException {
         return ResponseEntity.ok(ocrService.process(file));
     }
 
     @PostMapping("/save")
-    public ResponseEntity<ResultDto.OcrResultDto> save(@RequestBody ResultDto.OcrPreviewDto previewDto) {
-        return ResponseEntity.ok(ocrService.saveAnalyzedData(previewDto));
+    public ResponseEntity<ResultDto.OcrResultDto> save(@RequestBody ResultDto.OcrPreviewDto previewDto, @Parameter(hidden = true) @AuthUser Long userId) {
+        return ResponseEntity.ok(ocrService.saveAnalyzedData(previewDto, userId));
     }
 
 

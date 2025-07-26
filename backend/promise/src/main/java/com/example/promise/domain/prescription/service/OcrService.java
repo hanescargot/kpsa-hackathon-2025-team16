@@ -1,6 +1,7 @@
 package com.example.promise.domain.prescription.service;
 
 
+import com.example.promise.domain.medicationschedule.service.MedicationScheduleService;
 import com.example.promise.domain.medicine.entity.Medicine;
 
 import com.example.promise.domain.medicine.repository.MedicineRepository;
@@ -10,6 +11,8 @@ import com.example.promise.domain.prescription.entity.Prescription;
 import com.example.promise.domain.prescription.entity.PrescriptionMedicine;
 import com.example.promise.domain.prescription.repository.PrescriptionMedicineRepository;
 import com.example.promise.domain.prescription.repository.PrescriptionRepository;
+import com.example.promise.domain.user.entity.NormalUser;
+import com.example.promise.domain.user.repository.NormalUserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class OcrService {
     private final MedicineRepository medicineRepository;
     private final  PrescriptionRepository prescriptionRepository;
     private final PrescriptionMedicineRepository prescriptionMedicineRepository;
+    private final NormalUserRepository normalUserRepository;
+    private final MedicationScheduleService  medicationScheduleService;
 
     public ResultDto.OcrPreviewDto process(MultipartFile imageFile) throws IOException {
         List<String> ocrTexts = googleOcrService.extractTextFromImage(imageFile);
@@ -69,9 +74,11 @@ public class OcrService {
         return new ResultDto.OcrPreviewDto(pharmacy, date, doctor, patient, medicineDtos);
     }
 
-    public ResultDto.OcrResultDto saveAnalyzedData(ResultDto.OcrPreviewDto previewDto) {
+    public ResultDto.OcrResultDto saveAnalyzedData(ResultDto.OcrPreviewDto previewDto, Long userId) {
+        NormalUser user = normalUserRepository.findById(userId).get();
         Prescription prescription = prescriptionRepository.save(
                 Prescription.builder()
+                        .user(user)
                         .hospitalName(previewDto.getPharmacyName())
                         .prescribedAt(LocalDate.parse(previewDto.getPrescribedDate()))
                         .doctorName(previewDto.getDoctorName())    // 🔹 저장
@@ -85,14 +92,18 @@ public class OcrService {
             Medicine medicine = medicineRepository.findByName(m.getName())
                     .orElseGet(() -> medicineRepository.save(new Medicine(m.getName())));
 
-            prescriptionMedicineRepository.save(PrescriptionMedicine.builder()
+            PrescriptionMedicine pm= prescriptionMedicineRepository.save(PrescriptionMedicine.builder()
                     .prescription(prescription)
                     .medicine(medicine)
                     .usageDescription(m.getUsage())
                     .effect(m.getEffect())
                     .caution(m.getCaution())
                     .build());
+
+            medicationScheduleService.generateSchedules(user, pm);
         }
+
+
 
         return new ResultDto.OcrResultDto(true, "저장 성공", prescription.getId());
     }
