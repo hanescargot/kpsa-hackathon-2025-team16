@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB      # 파일 하나당 최대 10MB
+      max-request-size: 10MB   # 전체 요청당 최대 10MB
   config:
     import: "optional:env[.properties]"
   server:
@@ -10,7 +14,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update # 스키마 자동 업데이트
+      ddl-auto: create # 스키마 자동 업데이트
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -41,3 +45,10 @@ spring:
 openai:
   model: gpt-3.5-turbo
   secret-key: ${AI_SECRET_KEY}
+api:
+  pill:
+    service-key: ${SERVICE_KEY}
+google:
+  application:
+    credentials: "google-credential.json"
+

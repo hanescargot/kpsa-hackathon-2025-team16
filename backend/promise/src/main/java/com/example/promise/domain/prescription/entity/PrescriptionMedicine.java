@@ -5,15 +5,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "prescription_medicine")
 public class PrescriptionMedicine {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long preid;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "prescription_id")
@@ -23,16 +20,10 @@ public class PrescriptionMedicine {
     @JoinColumn(name = "medicine_id")
     private Medicine medicine;
 
-    private String does;
-
-    private int timesPerDay;
-
-    private int periodDays;
-
-    @Enumerated(EnumType.STRING)
-    private TimeSlot timeSlot;
-
-    public enum TimeSlot {
-        MORNING, NOON, EVENING, NIGHT
-    }
+    @Column(columnDefinition = "TEXT")
+    private String caution;// 주의사항
+    @Column(columnDefinition = "TEXT")
+    private String usageDescription;  //복약 안내
+    @Column(columnDefinition = "TEXT")
+    private String effect;       // 효능
 }

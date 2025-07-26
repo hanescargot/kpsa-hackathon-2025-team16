@@ -5,17 +5,14 @@ import com.example.promise.domain.user.entity.NormalUser;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Prescription {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -26,9 +23,10 @@ public class Prescription {
     @JoinColumn(name = "pharmacist_id")
     private Pharmacist pharmacist;
 
-    private Date prescribedAt;
-
+    private LocalDate prescribedAt;// 조제일자
     private Boolean viaOcr;
-
     private Boolean isVerified;
+
+    private String hospitalName;
+    private String doctorName;
 }
