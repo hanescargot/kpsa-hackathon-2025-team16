@@ -1,6 +1,9 @@
 package com.example.promise.domain.prescription.service;
 
 
+import com.example.promise.domain.challenge.dto.ChallengeRequestDto;
+import com.example.promise.domain.challenge.dto.ChallengeResponseDto;
+import com.example.promise.domain.challenge.service.ChallengeService;
 import com.example.promise.domain.medicationschedule.service.MedicationSlotService;
 import com.example.promise.domain.medicine.entity.Medicine;
 
@@ -35,6 +38,8 @@ public class OcrService {
     private final PrescriptionMedicineRepository prescriptionMedicineRepository;
     private final NormalUserRepository normalUserRepository;
     private final MedicationSlotService medicationSlotService;
+    private final ChallengeService challengeService;
+
 
     public ResultDto.OcrPreviewDto process(MultipartFile imageFile) throws IOException {
         List<String> ocrTexts = googleOcrService.extractTextFromImage(imageFile);
@@ -101,8 +106,30 @@ public class OcrService {
                     .build());
 
             medicationSlotService.generateSlots(user, pm);
-        }
 
+            // 🔹 복약 그룹 자동 참여 처리
+            int duration = medicationSlotService.parseDuration(m.getUsage()); // 이미 존재하는 메서드
+            LocalDate startDate = prescription.getPrescribedAt(); // 조제일자 기준
+
+            // 챌린지 그룹 자동 생성
+            challengeService.createChallengeGroupByDuration(duration, startDate);
+
+            List<ChallengeResponseDto.ChallengeGroupResponseDto> groups = challengeService.getAvailableChallengeGroups(startDate);
+
+            groups.stream()
+                    .filter(group -> group.getDurationDays() == duration)
+                    .findFirst()
+                    .ifPresent(group -> {
+                        ChallengeRequestDto.ChallengeParticipationRequestDto dto =
+                                ChallengeRequestDto.ChallengeParticipationRequestDto.builder()
+                                        .challengeGroupId(group.getGroupId())
+                                        .userId(userId)
+                                        .build();
+
+                        challengeService.participateInChallenge(dto, userId);
+                    });
+
+        }
 
 
         return new ResultDto.OcrResultDto(true, "저장 성공", prescription.getId());

@@ -83,7 +83,7 @@ public class MedicationSlotService {
         return 1;
     }
 
-    private int parseDuration(String usage) {
+    public int parseDuration(String usage) {
         Pattern pattern = Pattern.compile("(\\d+)일분");
         Matcher matcher = pattern.matcher(usage);
         if (matcher.find()) return Integer.parseInt(matcher.group(1));
