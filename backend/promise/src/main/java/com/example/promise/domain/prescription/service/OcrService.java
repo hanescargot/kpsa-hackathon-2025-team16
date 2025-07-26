@@ -125,27 +125,13 @@ public class OcrService {
 
             medicationSlotService.generateSlots(user, pm);
 
-            // 🔹 복약 그룹 자동 참여 처리
-            int duration = medicationSlotService.parseDuration(m.getUsage()); // 이미 존재하는 메서드
-            LocalDate startDate = prescription.getPrescribedAt(); // 조제일자 기준
+            // 🔹 복약 챌린지 자동 참여 처리
+            int doseCount = medicationSlotService.parseDoseCount(m.getUsage());  // ex: 하루 3회라면 3
+            LocalDate date = prescription.getPrescribedAt(); // 조제일자 기준
 
-            // 챌린지 그룹 자동 생성
-            challengeService.createChallengeGroupByDuration(duration, startDate);
-
-            List<ChallengeResponseDto.ChallengeGroupResponseDto> groups = challengeService.getAvailableChallengeGroups(startDate);
-
-            groups.stream()
-                    .filter(group -> group.getDurationDays() == duration)
-                    .findFirst()
-                    .ifPresent(group -> {
-                        ChallengeRequestDto.ChallengeParticipationRequestDto dto =
-                                ChallengeRequestDto.ChallengeParticipationRequestDto.builder()
-                                        .challengeGroupId(group.getGroupId())
-                                        .userId(userId)
-                                        .build();
-
-                        challengeService.participateInChallenge(dto, userId);
-                    });
+            // 참여 시 group이 생성되지 않았으면 자동 생성되고,
+            // 자동으로 1인당 100포인트 추가됨
+            challengeService.participate(userId, date, doseCount);
 
         }
 

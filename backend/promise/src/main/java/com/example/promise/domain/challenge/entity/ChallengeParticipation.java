@@ -28,7 +28,7 @@ public class ChallengeParticipation {
 
     private Long currentPoint = 0L;
 
-    private int successDays;  // 성공한 날 수 (단기: 3일 중 2일 등)
-    private boolean completed; // 챌린지 완료 여부
+    private boolean isSuccess;  // 복약횟수 충족 여부
+    private boolean completed;  // 정산 완료 여부
 }
 

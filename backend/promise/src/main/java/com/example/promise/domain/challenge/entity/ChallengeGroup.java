@@ -1,5 +1,6 @@
 package com.example.promise.domain.challenge.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,14 +18,13 @@ public class ChallengeGroup {
     @GeneratedValue
     private Long id;
 
-    private String groupName; // "3일 챌린지", "2025-07 장기 챌린지" 등
-    private Boolean isLongTerm; // true = 장기, false = 단기
-    private int durationDays; // 3, 5, 7 or 30 이상
+    private LocalDate challengeDate; // ex. 2025-07-26
+    private int requiredDoseCount;   // ex. 3회 복용 기준
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Long totalPoint; // 참여자 수 * 100
 
-    public boolean isLongTerm() {
-        return Boolean.TRUE.equals(this.isLongTerm);
-    }
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isSettled = false;
+
 }

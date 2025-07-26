@@ -90,12 +90,21 @@ public class MedicationSlotService {
         return 1;
     }
 
-    private List<LocalTime> getDefaultTimes(int timesPerDay) {
-        if (timesPerDay == 3)
-            return List.of(LocalTime.of(8, 0), LocalTime.of(12, 0), LocalTime.of(18, 0));
-        if (timesPerDay == 2)
-            return List.of(LocalTime.of(8, 0), LocalTime.of(18, 0));
-        return List.of(LocalTime.of(8, 0));
+    public int parseDoseCount(String usage) {
+        // 예: "하루 3회", "1일 2회", "하루 두 번" 등에서 정수 추출
+        if (usage == null) return 1;
+
+        usage = usage.replaceAll("[^0-9]", " "); // 숫자 아닌 건 공백 처리
+        String[] tokens = usage.trim().split("\\s+");
+
+        for (String token : tokens) {
+            try {
+                int num = Integer.parseInt(token);
+                if (num >= 1 && num <= 10) return num;
+            } catch (NumberFormatException ignored) {}
+        }
+
+        return 1; // 기본값: 하루 1회
     }
 
 

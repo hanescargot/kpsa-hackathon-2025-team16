@@ -29,6 +29,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TYPE_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER4007", "해당 유형이 존재하지 않습니다."),
     PASSWORD_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4008","계정이 존재하지 않거나 비밀번호가 틀렸습니다."),
 
+    CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE4001","챌린지그룹이 없거나 참여 인력이 없습니다."),
+
     PASSWORD_VALIDATION_FAILED(HttpStatus.BAD_REQUEST,"MEMBER4009","비밀번호는 영어 대/소문자, 숫자 중 2종류 이상을 조합해야 하며 8글자에서 12글자 사이의 값이여야 합니다."),
     EMAIL_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "MEMBER4010","올바르지 않은 이메일 형식입니다."),
 

@@ -1,3 +1,4 @@
+// 7. PharmacyGradeService.java
 package com.example.promise.domain.pharmacy.service;
 
 import com.example.promise.domain.challenge.entity.ChallengeGroup;
@@ -11,7 +12,6 @@ import com.example.promise.domain.user.entity.NormalUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,11 +44,7 @@ public class PharmacyGradeService {
             long pharmacyId = pharmacy.getPharmacyId();
             pharmacyMap.put(pharmacyId, pharmacy);
 
-            ChallengeGroup group = p.getChallengeGroup();
-            int totalDays = Period.between(group.getStartDate(), group.getEndDate()).getDays() + 1;
-            if (totalDays <= 0) continue;
-
-            double successRate = (double) p.getSuccessDays() / totalDays;
+            double successRate = p.isSuccess() ? 1.0 : 0.0; // ✅ 하루 단위 기준
 
             pharmacySuccessRates
                     .computeIfAbsent(pharmacyId, k -> new ArrayList<>())
@@ -60,8 +56,6 @@ public class PharmacyGradeService {
         for (Map.Entry<Long, List<Double>> entry : pharmacySuccessRates.entrySet()) {
             Long pharmacyId = entry.getKey();
             List<Double> successRates = entry.getValue();
-
-            //if (successRates.size() < 5) continue;
 
             double average = successRates.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
             String grade = getGrade(average);
@@ -106,4 +100,4 @@ public class PharmacyGradeService {
 
         return "기타";
     }
-}
+} 

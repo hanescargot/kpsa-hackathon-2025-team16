@@ -5,11 +5,11 @@ import com.example.promise.domain.challenge.entity.ChallengeParticipation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChallengeParticipationRepository extends JpaRepository<ChallengeParticipation, Long> {
-    List<ChallengeParticipation> findAllByUserId(Long userId);
+    boolean existsByUserIdAndChallengeGroup(Long userId, ChallengeGroup group);
     List<ChallengeParticipation> findAllByChallengeGroup(ChallengeGroup group);
-    boolean existsByUserIdAndChallengeGroupId(Long userId, Long challengeGroupId);
-
+    long countByChallengeGroupAndIsSuccessTrue(ChallengeGroup group);
+    Optional<ChallengeParticipation> findByUserIdAndChallengeGroup(Long userId, ChallengeGroup group);
 }
-
