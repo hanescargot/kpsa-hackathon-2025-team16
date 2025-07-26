@@ -163,7 +163,7 @@ class _VideoNotificationScreenState extends State<VideoNotificationScreen> {
             children: [
               // 1,2,3 버튼 + 라벨
               Container(
-                decoration: BoxDecoration(color: Colors.black12),
+                decoration: BoxDecoration(color: Colors.black54),
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -227,7 +227,7 @@ class _VideoNotificationScreenState extends State<VideoNotificationScreen> {
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ],
     );

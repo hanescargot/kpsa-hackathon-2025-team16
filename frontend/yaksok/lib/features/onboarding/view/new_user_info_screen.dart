@@ -163,7 +163,7 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
 
                   },
                   child: const Text(
-                    '회원가입',
+                    '정보 등록',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),

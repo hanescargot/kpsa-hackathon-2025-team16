@@ -69,6 +69,7 @@ dev_dependencies:
   auto_size_text: ^3.0.0
   video_player: ^2.8.6
   audioplayers: ^6.0.0
+  salomon_bottom_bar: ^3.3.2
 
 
 

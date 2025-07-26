@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../service/app_service.dart';
 import '../../util.dart';
 import 'camera_screen.dart';
 
@@ -83,11 +84,15 @@ class ImagePreviewScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('생성 시작!')),
-                          );
-                          // TODO: 다음 단계 이동
+                        onPressed: () async {
+                          // File imageFile = File('/your/path/to/image.jpg'); // 카메라로 촬영한 이미지
+
+                          final result = await ApiService().uploadOcrImage(imageFile);
+
+// 예시 출력
+//                           print(result['pharmacyName']);
+//                           print(result['medicines']);
+
                         },
                         child: const Text(
                           '생성 시작',

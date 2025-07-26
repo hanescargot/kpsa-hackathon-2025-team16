@@ -14,15 +14,25 @@ class HomeBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: const [
-          _NavIcon(icon: Icons.calendar_month, label: '캘린더', index: 0),
-          _NavIcon(icon: Icons.emoji_events, label: '랭킹', index: 1),
-          _NavIcon(icon: Icons.camera_alt, label: '카메라', index: 2),
-          _NavIcon(icon: Icons.people, label: '상담', index: 3),
-          _NavIcon(icon: Icons.person, label: 'My', index: 4),
-        ],
+      height: 100,
+      // color: Color(0x562379FF), // 배경 투명
+      color: Colors.transparent, // 배경 투명
+      elevation: 0,
+      child: SizedBox(
+        height: 70, // 충분한 높이 확보
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: const [
+              _NavIcon(icon: Icons.calendar_month, label: '캘린더', index: 0),
+              _NavIcon(icon: Icons.emoji_events, label: '랭킹', index: 1),
+              _NavIcon(icon: Icons.camera_alt, label: '카메라', index: 2),
+              _NavIcon(icon: Icons.people, label: '상담', index: 3),
+              _NavIcon(icon: Icons.person, label: 'My', index: 4),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -39,51 +49,54 @@ class _NavIcon extends StatelessWidget {
     required this.index,
   });
 
+  void _navigate(BuildContext context) {
+    switch (index) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const MedicationCalendarScreen()));
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen()));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const CameraGuideScreen()));
+        break;
+      case 3:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const ConsultationScreen()));
+        break;
+      case 4:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const MyPageScreen()));
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          switch (index) {
-            case 0:
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const MedicationCalendarScreen(),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: () => _navigate(context),
+          borderRadius: BorderRadius.circular(100),
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
                 ),
-              );
-              break;
-            case 1:
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const RankingScreen()));
-              break;
-            case 2:
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CameraGuideScreen()),
-              );
-              break;
-            case 3:
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ConsultationScreen()),
-              );
-              break;
-            case 4:
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const MyPageScreen()));
-              break;
-          }
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.black87),
-            const SizedBox(height: 4),
-            Text(label, style: const TextStyle(fontSize: 12)),
-          ],
+              ],
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 24, color: Colors.black87),
+          ),
         ),
-      ),
+        const SizedBox(height: 4),
+        // Text(label, style: const TextStyle(fontSize: 11, color: Colors.black87, fontWeight: FontWeight.bold)),
+      ],
     );
   }
 }

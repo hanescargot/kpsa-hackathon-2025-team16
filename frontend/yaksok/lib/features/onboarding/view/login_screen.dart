@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yaksok/features/home/view/new_home_screen.dart';
 
 import '../../../providers/auth_provider.dart';
 import '../../../service/app_service.dart';
@@ -26,6 +27,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleLogin(BuildContext context) async {
     try {
+      // // !!!!!!!!!! todo : for test
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const NewHomeScreen()),
+      // );
+      // return;
+
+
       final result = await ApiService().login(
         username: usernameController.text.trim(),
         password: passwordController.text,
