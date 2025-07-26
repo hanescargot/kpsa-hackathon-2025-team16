@@ -45,7 +45,7 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('평소 수면 스케줄', style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text('평소 수면 스케줄', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,16 +89,15 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Center(
-                child: Column(
+                child: Row(
                   children: [
-                    SizedBox(height: 12),
                     Image(
                       image: AssetImage('assets/logo/logo_rmbg.png'),
                       height: 80,
                     ),
                     SizedBox(height: 12),
                     Text(
-                      '회원가입',
+                      '고객 정보',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -108,13 +107,13 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              // const SizedBox(height: 24),
 
-              _buildLabel('아이디'),
-              _buildTextField(idController, hint: '아이디'),
-
-              _buildLabel('비밀번호'),
-              _buildTextField(pwController, hint: '비밀번호', obscure: true),
+              // _buildLabel('아이디'),
+              // _buildTextField(idController, hint: '아이디'),
+              //
+              // _buildLabel('비밀번호'),
+              // _buildTextField(pwController, hint: '비밀번호', obscure: true),
 
               _buildLabel('생년월일'),
               _buildTextField(birthController, hint: '8자리'),
@@ -129,10 +128,14 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
               buildHourRangeSelector(),
               const SizedBox(height: 12),
 
-              _buildTextField(sleepController, hint: '수면시간'),
-              const SizedBox(height: 16),
-
-              _buildMealTimeRow(),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                ),
+                child: _buildMealTimeRow(),
+              ),
 
               const SizedBox(height: 24),
               SizedBox(
@@ -160,11 +163,14 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
 
                     ref.read(userInfoProvider.notifier).state = user;
                     context.go('/home');
-
                   },
                   child: const Text(
-                    '정보 등록',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    '등록',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -191,10 +197,10 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller, {
-        String? hint,
-        bool obscure = false,
-      }) {
+    TextEditingController controller, {
+    String? hint,
+    bool obscure = false,
+  }) {
     return TextField(
       controller: controller,
       obscureText: obscure,
@@ -220,11 +226,11 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
         _buildTimeDropdownRow('아침', morningTime, (val) {
           setState(() => morningTime = val);
         }),
-        const SizedBox(height: 8),
+        Divider(),
         _buildTimeDropdownRow('점심', lunchTime, (val) {
           setState(() => lunchTime = val);
         }),
-        const SizedBox(height: 8),
+        Divider(),
         _buildTimeDropdownRow('저녁', dinnerTime, (val) {
           setState(() => dinnerTime = val);
         }),
@@ -233,10 +239,10 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
   }
 
   Widget _buildTimeDropdownRow(
-      String label,
-      String value,
-      void Function(String) onChanged,
-      ) {
+    String label,
+    String value,
+    void Function(String) onChanged,
+  ) {
     final timeOptions = [
       '06:00',
       '07:00',

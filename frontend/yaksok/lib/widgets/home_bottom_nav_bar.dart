@@ -6,6 +6,7 @@ import 'package:yaksok/features/camera/camera_screen.dart';
 import '../features/calendar/medication_calendar_screen.dart';
 import '../features/counseling/counseling_screen.dart';
 import '../features/my_page/my_page_screen.dart';
+import '../features/rank/medication_challenge_square.dart';
 import '../features/ranking/ranking_screen.dart';
 
 class HomeBottomNavBar extends StatelessWidget {
@@ -55,7 +56,7 @@ class _NavIcon extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const MedicationCalendarScreen()));
         break;
       case 1:
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const MedicationChallengeSquare()));
         break;
       case 2:
         Navigator.push(context, MaterialPageRoute(builder: (_) => const CameraGuideScreen()));

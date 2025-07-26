@@ -37,7 +37,7 @@ class MedicationCalendarScreen extends StatelessWidget {
                     ],
                   ),
                   IconButton(
-                    icon: Icon(Icons.home, size: 28, color: kColorPrimary),
+                    icon: Icon(Icons.home, size: 28, color: Colors.blue),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -187,7 +187,7 @@ class MedicationCalendarScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(

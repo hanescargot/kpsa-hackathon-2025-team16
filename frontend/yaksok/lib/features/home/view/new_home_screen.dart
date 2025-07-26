@@ -51,11 +51,10 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFAFCBFF),
+      backgroundColor: const Color(0xFF9BC2FF),
       body: SafeArea(
         child: Stack(
           children: [
-
             Column(
               children: [
                 // 광고 배너
@@ -87,8 +86,9 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                           child: Row(
                             children: [
                               InkWell(
-                                onTap: () =>
-                                    context.pushNamed(VideoNotificationScreen.routeName),
+                                onTap: () => context.pushNamed(
+                                  VideoNotificationScreen.routeName,
+                                ),
                                 child: Image.asset(
                                   'assets/logo/logo_rmbg.png',
                                   height: 80,
@@ -173,17 +173,30 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                                 ),
                               ),
                               SizedBox(height: 12),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Column(
                                 children: [
-                                  Column(
+                                  Row(
                                     children: [
-                                      Icon(
-                                        Icons.settings_system_daydream_rounded,
-                                        color: Colors.blueAccent,
+                                      Column(
+                                        children: [
+                                          Icon(
+                                            Icons
+                                                .settings_system_daydream_rounded,
+                                            color: Colors.blueAccent,
+                                          ),
+
+                                        ],
+                                      ),
+                                      SizedBox(width: 8,),
+                                      Text(
+                                        "아침 - ",
+                                        style: TextStyle(
+                                          fontFamily: 'MapleStory',
+                                          color: Colors.black54,
+                                        ),
                                       ),
                                       Text(
-                                        "아침",
+                                        "9:00",
                                         style: TextStyle(
                                           fontFamily: 'MapleStory',
                                           color: Colors.black54,
@@ -191,33 +204,50 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Wrap(
-                                      spacing: 8,
-                                      runSpacing: 8,
-                                      children: [
-                                        _PillChip('히트코나졸정'),
-                                        _PillChip('피디정'),
-                                        _PillChip('동구록시트로마이신'),
-                                        _PillChip('모사피아정'),
-                                      ],
-                                    ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _PillChip('히트코나졸정'),
+                                            _PillChip('피디정'),
+                                            _PillChip('동구록시트로마이신'),
+                                            _PillChip('모사피아정'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
                               SizedBox(height: 16),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Column(
                                 children: [
-                                  Column(
+                                  Row(
                                     children: [
-                                      Icon(
-                                        Icons.wb_sunny,
-                                        color: Colors.orange,
+                                      Column(
+                                        children: [
+                                          Icon(
+                                            Icons.wb_sunny,
+                                            color: Colors.orange,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 8,),
+                                      Text(
+                                        "점심 - ",
+                                        style: TextStyle(
+                                          fontFamily: 'MapleStory',
+                                          color: Colors.black54,
+                                        ),
                                       ),
                                       Text(
-                                        "점심",
+                                        "13:00",
                                         style: TextStyle(
                                           fontFamily: 'MapleStory',
                                           color: Colors.black54,
@@ -225,33 +255,46 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Wrap(
-                                      spacing: 8,
-                                      runSpacing: 8,
-                                      children: [
-                                        _PillChip('히트코나졸정'),
-                                        _PillChip('피디정'),
-                                        _PillChip('동구록시트로마이신'),
-                                        _PillChip('모사피아정'),
-                                      ],
-                                    ),
+                                  Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _PillChip('히트코나졸정'),
+                                            _PillChip('피디정'),
+                                            _PillChip('동구록시트로마이신'),
+                                            _PillChip('모사피아정'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
+
                               SizedBox(height: 16),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Column(
                                 children: [
-                                  Column(
+                                  Row(
                                     children: [
                                       Icon(
                                         Icons.nightlight_round,
                                         color: Colors.indigo,
                                       ),
                                       Text(
-                                        "저녁",
+                                        "저녁 - ",
+                                        style: TextStyle(
+                                          fontFamily: 'MapleStory',
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      Text(
+                                        "19:00",
                                         style: TextStyle(
                                           fontFamily: 'MapleStory',
                                           color: Colors.black54,
@@ -259,16 +302,26 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Wrap(
-                                      spacing: 8,
-                                      runSpacing: 8,
-                                      children: [
-                                        _PillChip('모사피아정'),
-                                        _PillChip('로이탄 연질캡슐'),
-                                      ],
-                                    ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        children: [
+
+                                        ],
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _PillChip('모사피아정'),
+                                            _PillChip('로이탄 연질캡슐'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -328,12 +381,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                 ),
               ],
             ),
-            Positioned(
-              right: 0,
-              left: 0,
-              bottom: 0,
-              child: HomeBottomNavBar(),
-            ),
+            Positioned(right: 0, left: 0, bottom: 0, child: HomeBottomNavBar()),
           ],
         ),
       ),

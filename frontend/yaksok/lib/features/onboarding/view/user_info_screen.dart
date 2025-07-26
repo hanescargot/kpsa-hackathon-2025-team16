@@ -128,10 +128,7 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
               buildHourRangeSelector(),
               const SizedBox(height: 12),
 
-              _buildTextField(sleepController, hint: '수면시간'),
-              const SizedBox(height: 16),
-
-              _buildMealTimeRow(),
+              Container(color: Colors.white, child: _buildMealTimeRow()),
 
               const SizedBox(height: 24),
               SizedBox(
@@ -177,10 +174,10 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller, {
-        String? hint,
-        bool obscure = false,
-      }) {
+    TextEditingController controller, {
+    String? hint,
+    bool obscure = false,
+  }) {
     return TextField(
       controller: controller,
       obscureText: obscure,
@@ -219,10 +216,10 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
   }
 
   Widget _buildTimeDropdownRow(
-      String label,
-      String value,
-      void Function(String) onChanged,
-      ) {
+    String label,
+    String value,
+    void Function(String) onChanged,
+  ) {
     final timeOptions = [
       '06:00',
       '07:00',
