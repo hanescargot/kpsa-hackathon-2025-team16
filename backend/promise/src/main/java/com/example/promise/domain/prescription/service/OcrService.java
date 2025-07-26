@@ -1,7 +1,7 @@
 package com.example.promise.domain.prescription.service;
 
 
-import com.example.promise.domain.medicationschedule.service.MedicationScheduleService;
+import com.example.promise.domain.medicationschedule.service.MedicationSlotService;
 import com.example.promise.domain.medicine.entity.Medicine;
 
 import com.example.promise.domain.medicine.repository.MedicineRepository;
@@ -34,7 +34,7 @@ public class OcrService {
     private final  PrescriptionRepository prescriptionRepository;
     private final PrescriptionMedicineRepository prescriptionMedicineRepository;
     private final NormalUserRepository normalUserRepository;
-    private final MedicationScheduleService  medicationScheduleService;
+    private final MedicationSlotService medicationSlotService;
 
     public ResultDto.OcrPreviewDto process(MultipartFile imageFile) throws IOException {
         List<String> ocrTexts = googleOcrService.extractTextFromImage(imageFile);
@@ -100,7 +100,7 @@ public class OcrService {
                     .caution(m.getCaution())
                     .build());
 
-            medicationScheduleService.generateSchedules(user, pm);
+            medicationSlotService.generateSlots(user, pm);
         }
 
 
