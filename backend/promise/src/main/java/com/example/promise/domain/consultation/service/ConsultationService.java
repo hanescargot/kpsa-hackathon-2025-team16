@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,4 +72,28 @@ public class ConsultationService {
                 .map(m -> new ConsultationMessageResponseDto(m.getSender(), m.getMessage(), m.getSentAt()))
                 .collect(Collectors.toList());
     }
+
+    public List<ConsultationSummaryDto> getWaitingConsultations(Long pharmacistId) {
+        List<Consultation> consultations = consultationRepository.findByPharmacistIdAndIsCompletedFalse(pharmacistId);
+
+        return consultations.stream()
+                .map(c -> {
+                    // 최신 메시지 하나 조회 (가장 최근)
+                    ConsultationMessage latest = messageRepository
+                            .findTopByConsultationIdOrderBySentAtDesc(c.getId())
+                            .orElse(null);
+
+                    if (latest == null) return null;
+
+                    return new ConsultationSummaryDto(
+                            c.getId(),
+                            c.getUser().getName(),
+                            latest.getMessage(),
+                            latest.getSentAt()
+                    );
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
 }

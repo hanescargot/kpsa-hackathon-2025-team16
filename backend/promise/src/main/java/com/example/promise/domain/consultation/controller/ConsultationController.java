@@ -4,6 +4,7 @@ package com.example.promise.domain.consultation.controller;
 import com.example.promise.domain.consultation.dto.*;
 import com.example.promise.domain.consultation.service.ConsultationService;
 import com.example.promise.domain.user.entity.BaseUser;
+import com.example.promise.global.ApiResponse;
 import com.example.promise.global.auth.AuthUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,4 +42,11 @@ public class ConsultationController {
     public List<ConsultationMessageResponseDto> getMessages(@PathVariable Long consultationId) {
         return consultationService.getMessages(consultationId);
     }
+
+    @GetMapping("/pharmacist/{pharmacistId}/waiting")
+    @Operation(summary = "약사님을 기다리고 있는 메시지들")
+    public ApiResponse<List<ConsultationSummaryDto>> getWaitingConsultations(@PathVariable Long pharmacistId) {
+        return ApiResponse.onSuccess(consultationService.getWaitingConsultations(pharmacistId));
+    }
+
 }
