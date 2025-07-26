@@ -5,6 +5,8 @@ import com.example.promise.domain.user.entity.NormalUser;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter @Setter
 @NoArgsConstructor
@@ -17,18 +19,16 @@ public class Consultation {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private NormalUser user;
 
     @ManyToOne
-    @JoinColumn(name = "pharmacist_id")
+    @JoinColumn(name = "pharmacist_id", nullable = false)
     private Pharmacist pharmacist;
 
-    private String category;
-
-    private String message;
-
-    private String imageUrl;
-
     private Boolean isCompleted;
+
+    private LocalDateTime startedAt;
+    private LocalDateTime completedAt;
 }
+

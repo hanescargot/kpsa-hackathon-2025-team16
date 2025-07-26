@@ -43,9 +43,9 @@ public class AuthController {
     @PostMapping("/pharmacist-signup")
     @Operation(summary = "약사 회원가입", description = "약사 회원가입 API (약국정보 포함)")
     public ApiResponse<AuthResponseDTO.SignResponseDTO> pharmacistSignup(@RequestBody AuthRequestDTO.PharmacistSignupDTO dto) {
-        Pharmacist pharmacist = AuthConverter.toPharmacist(dto);
-        return ApiResponse.onSuccess(authService.signUpPharmacist(pharmacist));
+        return ApiResponse.onSuccess(authService.signUpPharmacist(dto));
     }
+
 
 
     @PostMapping("/login")

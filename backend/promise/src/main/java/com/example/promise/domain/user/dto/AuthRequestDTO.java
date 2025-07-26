@@ -32,6 +32,7 @@ public class AuthRequestDTO {
         private String name;
         private LocalDate birthDate;
         private String phone;
+        private String pharmacyName;
         private Long pharmacyVerify;
     }
 

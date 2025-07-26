@@ -4,6 +4,7 @@ package com.example.promise.domain.user.service;
 
 import com.example.promise.domain.pharmacist.entity.Pharmacist;
 import com.example.promise.domain.pharmacist.repository.PharmacistRepository;
+import com.example.promise.domain.pharmacy.entity.Pharmacy;
 import com.example.promise.domain.pharmacy.repository.PharmacyRepository;
 import com.example.promise.domain.user.converter.AuthConverter;
 import com.example.promise.domain.user.dto.AuthRequestDTO;
@@ -28,6 +29,7 @@ public class AuthService {
     private final PharmacistRepository pharmacistRepository;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PharmacyRepository pharmacyRepository;
 
     public AuthResponseDTO.SignResponseDTO signUpUser(NormalUser user) {
         validatePassword(user.getPassword());
@@ -36,12 +38,35 @@ public class AuthService {
         return AuthConverter.toSigninResponseDTO(user);
     }
 
-    public AuthResponseDTO.SignResponseDTO signUpPharmacist(Pharmacist pharmacist) {
-        validatePassword(pharmacist.getPassword());
-        pharmacist.setPassword(passwordEncoder.encode(pharmacist.getPassword()));
+    public AuthResponseDTO.SignResponseDTO signUpPharmacist(AuthRequestDTO.PharmacistSignupDTO dto) {
+        validatePassword(dto.getPassword());
+
+        // 1. 약사 객체 생성
+        Pharmacist pharmacist = Pharmacist.builder()
+                .email(dto.getEmail())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .name(dto.getName())
+                .phone(dto.getPhone())
+                .birthDate(dto.getBirthDate())
+                .build();
+
+        // 2. 약국 저장
+        Pharmacy pharmacy = Pharmacy.builder()
+                .name(dto.getPharmacyName())
+                .build();
+        pharmacyRepository.save(pharmacy);
+
+        // 3. 연관관계 매핑
+        pharmacist.setPharmacy(pharmacy);
+
+        // 4. 저장
         pharmacistRepository.save(pharmacist);
+
+        // 5. 반환
         return AuthConverter.toSigninResponseDTO(pharmacist);
     }
+
+
 
 
 
