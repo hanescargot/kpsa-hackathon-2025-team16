@@ -22,14 +22,14 @@ public class ConsultationController {
     private final ConsultationService consultationService;
 
     @PostMapping
-    @Operation(summary = "상담 생성", description = "사용자가 약사에게 상담을 요청하고 첫 메시지를 보냅니다.")
+    @Operation(summary = "상담 생성", description = "사용자가 약사에게 상담을 요청하고 첫 메시지를 보냅니다. 토큰 필요")
     public ConsultationResponseDto createConsultation(@RequestBody ConsultationRequestDto request,
                                                       @Parameter(hidden = true) @AuthUser Long userId) {
         return consultationService.createConsultation(userId, request);
     }
 
     @PostMapping("/message")
-    @Operation(summary = "상담 메시지 전송", description = "사용자 또는 약사가 상담방에 메시지를 전송합니다.")
+    @Operation(summary = "상담 메시지 전송", description = "사용자 또는 약사가 상담방에 메시지를 전송합니다. 토큰 필요")
     public void sendMessage(@RequestBody ConsultationMessageRequestDto request,
                             @Parameter(hidden = true) @AuthUser Long userId,
                             @RequestParam(defaultValue = "false") boolean fromPharmacist) {

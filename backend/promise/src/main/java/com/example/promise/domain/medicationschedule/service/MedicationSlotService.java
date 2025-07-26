@@ -244,6 +244,28 @@ public class MedicationSlotService {
         challengeService.updateChallengeProgress(slot.getUser().getId(), slot.getDate());
     }
 
+    public MsDto.RangeResponse getScheduleRange(Long userId) {
+        NormalUser user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<MedicationSlot> slots = medicationSlotRepository.findByUser(user);
+
+        if (slots.isEmpty()) {
+            return new MsDto.RangeResponse(null, null);
+        }
+
+        LocalDate start = slots.stream()
+                .map(MedicationSlot::getDate)
+                .min(LocalDate::compareTo)
+                .get();
+
+        LocalDate end = slots.stream()
+                .map(MedicationSlot::getDate)
+                .max(LocalDate::compareTo)
+                .get();
+
+        return new MsDto.RangeResponse(start, end);
+    }
 
 
 }

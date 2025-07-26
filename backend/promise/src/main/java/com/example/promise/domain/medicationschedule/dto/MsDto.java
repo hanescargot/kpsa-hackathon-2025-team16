@@ -50,5 +50,12 @@ public class MsDto {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RangeResponse {
+        private LocalDate startDate;
+        private LocalDate endDate;
+    }
 
 }

@@ -28,6 +28,7 @@ public class AuthResponseDTO {
     @Builder
     public static class LoginResponseDTO{
         private String token;
+        private String name;
     }
 
 

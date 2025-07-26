@@ -113,7 +113,7 @@ public class AuthService {
         }
 
         String token = tokenProvider.generateToken(user.getName(), user.getId());
-        return new AuthResponseDTO.LoginResponseDTO(token);
+        return new AuthResponseDTO.LoginResponseDTO(token, user.getName());
     }
 
     //토큰 재발행

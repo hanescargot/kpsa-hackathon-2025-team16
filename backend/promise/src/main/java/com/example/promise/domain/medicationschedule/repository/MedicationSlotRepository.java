@@ -13,4 +13,5 @@ public interface MedicationSlotRepository extends JpaRepository<MedicationSlot,L
     Optional<MedicationSlot> findByUserAndDateAndSlotTime(NormalUser user, LocalDate date, SlotTime slotTime);
     List<MedicationSlot> findByUserAndDateBetween(NormalUser user, LocalDate start, LocalDate end);
     List<MedicationSlot> findByUserAndDate(NormalUser user, LocalDate date);
+    List<MedicationSlot> findByUser(NormalUser user);
 }
