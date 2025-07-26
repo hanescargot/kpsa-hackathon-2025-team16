@@ -1,17 +1,15 @@
-// 7. PharmacyGradeService.java
 package com.example.promise.domain.pharmacy.service;
 
-import com.example.promise.domain.challenge.entity.ChallengeGroup;
-import com.example.promise.domain.challenge.entity.ChallengeParticipation;
-import com.example.promise.domain.challenge.repository.ChallengeParticipationRepository;
+import com.example.promise.domain.medicationschedule.entity.MedicationSlot;
+import com.example.promise.domain.medicationschedule.repository.MedicationSlotRepository;
 import com.example.promise.domain.pharmacy.dto.PharmacyGradeDto;
 import com.example.promise.domain.pharmacy.entity.Pharmacy;
 import com.example.promise.domain.prescription.entity.Prescription;
-import com.example.promise.domain.prescription.repository.PrescriptionRepository;
 import com.example.promise.domain.user.entity.NormalUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,85 +17,80 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PharmacyGradeService {
 
-    private final ChallengeParticipationRepository participationRepository;
-    private final PrescriptionRepository prescriptionRepository;
+    private final MedicationSlotRepository slotRepository;
 
-    /**
-     * 읍면동 단위로 약국 등급 결과를 그룹화하여 반환
-     */
     public Map<String, List<PharmacyGradeDto>> calculatePharmacyGradesByRegion() {
-        List<ChallengeParticipation> all = participationRepository.findAll();
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.minusMonths(1).withDayOfMonth(1); // 전월 1일
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth()); // 전월 말일
 
-        Map<Long, List<Double>> pharmacySuccessRates = new HashMap<>();
-        Map<Long, Pharmacy> pharmacyMap = new HashMap<>();
+        // 전월 복약 슬롯 전체 조회
+        List<MedicationSlot> slots = slotRepository.findByDateBetween(startDate, endDate);
 
-        for (ChallengeParticipation p : all) {
-            NormalUser user = p.getUser();
-            Optional<Prescription> latestPrescription = prescriptionRepository
-                    .findTopByUserOrderByPrescribedAtDesc(user);
+        // 약국별 복약 슬롯 분류
+        Map<Pharmacy, List<MedicationSlot>> pharmacySlotMap = new HashMap<>();
 
-            if (latestPrescription.isEmpty()) continue;
+        for (MedicationSlot slot : slots) {
+            Prescription prescription = getPrescriptionFromSlot(slot);
+            if (prescription == null || prescription.getPharmacy() == null) continue;
 
-            Pharmacy pharmacy = latestPrescription.get().getPharmacy();
-            if (pharmacy == null) continue;
-
-            long pharmacyId = pharmacy.getPharmacyId();
-            pharmacyMap.put(pharmacyId, pharmacy);
-
-            double successRate = p.isSuccess() ? 1.0 : 0.0; // ✅ 하루 단위 기준
-
-            pharmacySuccessRates
-                    .computeIfAbsent(pharmacyId, k -> new ArrayList<>())
-                    .add(successRate);
+            Pharmacy pharmacy = prescription.getPharmacy();
+            pharmacySlotMap.computeIfAbsent(pharmacy, k -> new ArrayList<>()).add(slot);
         }
 
-        // 등급 계산
-        List<PharmacyGradeDto> allResults = new ArrayList<>();
-        for (Map.Entry<Long, List<Double>> entry : pharmacySuccessRates.entrySet()) {
-            Long pharmacyId = entry.getKey();
-            List<Double> successRates = entry.getValue();
+        List<PharmacyGradeDto> gradeList = new ArrayList<>();
 
-            double average = successRates.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
-            String grade = getGrade(average);
+        for (Map.Entry<Pharmacy, List<MedicationSlot>> entry : pharmacySlotMap.entrySet()) {
+            Pharmacy pharmacy = entry.getKey();
+            List<MedicationSlot> slotList = entry.getValue();
 
-            Pharmacy pharmacy = pharmacyMap.get(pharmacyId);
-            String address = pharmacy.getAddress();
+            // 유저 수 집계
+            Set<Long> uniqueUserIds = slotList.stream()
+                    .map(s -> s.getUser().getId())
+                    .collect(Collectors.toSet());
 
-            allResults.add(PharmacyGradeDto.builder()
-                    .pharmacyId(pharmacyId)
+            int totalUsers = uniqueUserIds.size();
+
+            // 복약 성공 슬롯 수
+            long totalSuccess = slotList.stream()
+                    .filter(MedicationSlot::getTaken)
+                    .count();
+
+            // 성공률 = 총 성공 슬롯 / 유저 수
+            double average = totalUsers == 0 ? 0.0 : (double) totalSuccess / totalUsers;
+
+            gradeList.add(PharmacyGradeDto.builder()
+                    .pharmacyId(pharmacy.getPharmacyId())
                     .pharmacyName(pharmacy.getName())
-                    .address(address)
+                    .address(pharmacy.getAddress())
                     .averageSuccessRate(average)
-                    .participantCount(successRates.size())
-                    .grade(grade)
+                    .participantCount(totalUsers)
+                    .grade(getGrade(average))
                     .build());
         }
 
-        // 읍면동 기준으로 그룹핑
-        return allResults.stream()
+        return gradeList.stream()
                 .collect(Collectors.groupingBy(dto -> extractTown(dto.getAddress())));
     }
 
-    /**
-     * 평균 성공률 → 약국 등급
-     */
+    private Prescription getPrescriptionFromSlot(MedicationSlot slot) {
+        return slot.getMedicines().stream()
+                .findFirst()
+                .map(msm -> msm.getPrescriptionMedicine().getPrescription())
+                .orElse(null);
+    }
+
     private String getGrade(double avg) {
-        if (avg >= 0.9) return "숲 약국";
-        else if (avg >= 0.7) return "나무 약국";
-        else if (avg >= 0.5) return "새싹 약국";
+        if (avg >= 90) return "숲 약국";
+        else if (avg >= 70) return "나무 약국";
+        else if (avg >= 50) return "새싹 약국";
         else return "등급 없음";
     }
 
-    /**
-     * 주소에서 읍/면/동 정보 추출
-     * 예: "서울 강남구 역삼동 123" → "역삼동"
-     */
     private String extractTown(String address) {
         if (address == null || address.isBlank()) return "기타";
-
         String[] parts = address.trim().split(" ");
-        if (parts.length >= 3) return parts[2]; // 시, 구, 동
-
+        if (parts.length >= 3) return parts[2];
         return "기타";
     }
-} 
+}

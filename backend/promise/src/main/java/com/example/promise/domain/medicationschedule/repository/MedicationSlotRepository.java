@@ -14,4 +14,7 @@ public interface MedicationSlotRepository extends JpaRepository<MedicationSlot,L
     List<MedicationSlot> findByUserAndDateBetween(NormalUser user, LocalDate start, LocalDate end);
     List<MedicationSlot> findByUserAndDate(NormalUser user, LocalDate date);
     List<MedicationSlot> findByUser(NormalUser user);
+    // 전월 등급 산정을 위한 슬롯 목록 조회
+    List<MedicationSlot> findByDateBetween(LocalDate startDate, LocalDate endDate);
+
 }

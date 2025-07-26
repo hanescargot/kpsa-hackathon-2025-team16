@@ -1,5 +1,6 @@
 package com.example.promise.domain.pharmacy.entity;
 
+import com.example.promise.domain.pharmacy.entity.status.PharmacyGrade;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -26,4 +27,9 @@ public class Pharmacy {
     private Double lng;
 
     private String openHours;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private PharmacyGrade grade=PharmacyGrade.SEEDLING;
+
 }
