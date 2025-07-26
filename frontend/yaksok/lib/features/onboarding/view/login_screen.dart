@@ -73,7 +73,7 @@ class LoginScreen extends ConsumerWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
 
                     // 로그인 버튼
                     SizedBox(
@@ -90,32 +90,22 @@ class LoginScreen extends ConsumerWidget {
                           ref.read(authProvider.notifier).state = true;
                           context.go('/home');
                         },
-                        child: const Icon(Icons.arrow_forward, color: Colors.white),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("로그인", style: TextStyle(color: Colors.white),),
+                            // SizedBox(width: 16),
+                            // const Icon
+                            //   (Icons.arrow_forward, color: Colors.white),
+                          ],
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
 
                     // 소셜 로그인
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Image.asset('assets/images/kakao_icon.png', width: 36),
-                            const SizedBox(height: 4),
-                            const Text('카카오톡으로 로그인', style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Image.asset('assets/images/google_icon.png', width: 36),
-                            const SizedBox(height: 4),
-                            const Text('구글계정으로 로그인', style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                      ],
-                    ),
+                    Image.asset('assets/tr/sns_login.png'),
 
                     const SizedBox(height: 32),
 

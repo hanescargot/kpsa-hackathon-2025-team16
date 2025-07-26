@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../features/home/view/home_screen.dart';
+import '../features/home/view/video_call_screen.dart';
 import '../features/onboarding/view/login_screen.dart';
 import '../features/onboarding/view/onboarding_screen.dart';
 import '../features/onboarding/view/user_info_screen.dart';
@@ -60,6 +61,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/home',
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/video-notification',
+        name: VideoNotificationScreen.routeName,
+        builder: (context, state) => const VideoNotificationScreen(),
       ),
     ],
   );

@@ -125,10 +125,12 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                   ],
                 );
                 ref.read(userInfoProvider.notifier).state = user;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("사용자 정보 저장됨")),
-                );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   const SnackBar(content: Text("사용자 정보 저장됨")),
+                // );
                 // TODO: 다음 화면 이동
+                Navigator.of(context).pop();
+
               },
               child: const Text('저장하고 계속하기'),
             ),
