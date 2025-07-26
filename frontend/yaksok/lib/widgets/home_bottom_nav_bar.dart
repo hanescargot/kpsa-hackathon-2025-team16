@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:yaksok/features/calendar/calendar_screen.dart';
+import 'package:yaksok/features/calendar/calendar_screen.dart' hide MedicationCalendarScreen;
 import 'package:yaksok/features/camera/camera_screen.dart';
 
+import '../features/calendar/medication_calendar_screen.dart';
 import '../features/counseling/counseling_screen.dart';
 import '../features/my_page/my_page_screen.dart';
 import '../features/ranking/ranking_screen.dart';
@@ -32,7 +33,11 @@ class _NavIcon extends StatelessWidget {
   final String label;
   final int index;
 
-  const _NavIcon({required this.icon, required this.label, required this.index});
+  const _NavIcon({
+    required this.icon,
+    required this.label,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +46,31 @@ class _NavIcon extends StatelessWidget {
         onTap: () {
           switch (index) {
             case 0:
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CalendarScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const MedicationCalendarScreen(),
+                ),
+              );
               break;
             case 1:
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RankingScreen()));
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const RankingScreen()));
               break;
             case 2:
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CameraGuideScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CameraGuideScreen()),
+              );
               break;
             case 3:
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConsultationScreen()));
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ConsultationScreen()),
+              );
               break;
             case 4:
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyPageScreen()));
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const MyPageScreen()));
               break;
           }
         },
@@ -70,4 +87,3 @@ class _NavIcon extends StatelessWidget {
     );
   }
 }
-

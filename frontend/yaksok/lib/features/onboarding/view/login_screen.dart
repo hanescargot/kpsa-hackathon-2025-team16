@@ -16,20 +16,20 @@ class LoginScreen extends ConsumerWidget {
         child: Stack(
           children: [
             // 닫기 버튼 (X)
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
-                  style: IconButton.styleFrom(
-                    backgroundColor: kColorPrimary,
-                    padding: const EdgeInsets.all(10),
-                  ),
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(12),
+            //     child: IconButton(
+            //       icon: const Icon(Icons.close, color: Colors.white),
+            //       onPressed: () => Navigator.pop(context),
+            //       style: IconButton.styleFrom(
+            //         backgroundColor: kColorPrimary,
+            //         padding: const EdgeInsets.all(10),
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             // 메인 로그인 UI
             Center(
