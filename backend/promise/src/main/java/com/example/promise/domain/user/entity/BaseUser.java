@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 import java.time.LocalDate;
 
@@ -26,6 +27,7 @@ public abstract class BaseUser extends BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @Unique
     private String email;
     private String password;
     private String name;

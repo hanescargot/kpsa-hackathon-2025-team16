@@ -6,6 +6,7 @@ import com.example.promise.domain.pharmacist.entity.Pharmacist;
 import com.example.promise.domain.pharmacist.repository.PharmacistRepository;
 import com.example.promise.domain.pharmacy.entity.Pharmacy;
 import com.example.promise.domain.pharmacy.repository.PharmacyRepository;
+import com.example.promise.domain.pharmacy.service.PharmacyApiService;
 import com.example.promise.domain.user.converter.AuthConverter;
 import com.example.promise.domain.user.dto.AuthRequestDTO;
 import com.example.promise.domain.user.dto.AuthResponseDTO;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +32,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final PharmacyRepository pharmacyRepository;
+    private final PharmacyApiService pharmacyApiService;
 
     public AuthResponseDTO.SignResponseDTO signUpUser(NormalUser user) {
         validatePassword(user.getPassword());
@@ -48,21 +51,25 @@ public class AuthService {
                 .name(dto.getName())
                 .phone(dto.getPhone())
                 .birthDate(dto.getBirthDate())
+                .pharmacyVerify(dto.getPharmacyVerify())
                 .build();
 
-        // 2. 약국 저장
-        Pharmacy pharmacy = Pharmacy.builder()
-                .name(dto.getPharmacyName())
-                .build();
-        pharmacyRepository.save(pharmacy);
+        // 2. 약국 이름으로 API 조회
+        List<Pharmacy> pharmacies = pharmacyApiService.fetchAndSavePharmacyList(dto.getPharmacyName());
+        if (pharmacies.isEmpty()) {
+            throw new RuntimeException("해당 이름의 약국 정보를 찾을 수 없습니다.");
+        }
 
-        // 3. 연관관계 매핑
+        // 3. 첫 번째 약국을 자동 매핑 (or 프론트에서 선택하게 변경 가능)
+        Pharmacy pharmacy = pharmacies.get(0);
+
+        // 4. 연관관계 매핑
         pharmacist.setPharmacy(pharmacy);
 
-        // 4. 저장
+        // 5. 저장
         pharmacistRepository.save(pharmacist);
 
-        // 5. 반환
+        // 6. 반환
         return AuthConverter.toSigninResponseDTO(pharmacist);
     }
 
