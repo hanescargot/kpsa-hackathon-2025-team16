@@ -189,6 +189,14 @@ public class MedicationSlotService {
     }
 
 
+    private String getUserSlotTimeText(NormalUser user, SlotTime slotTime) {
+        return switch (slotTime) {
+            case MORNING -> user.getMorningTime();
+            case LUNCH -> user.getLunchTime();
+            case EVENING -> user.getEveningTime();
+        };
+    }
+
 
     public MsDto.DailySlotResponse getSlotsByDate(Long userId, LocalDate date) {
         NormalUser user = userRepository.findById(userId)
@@ -200,11 +208,21 @@ public class MedicationSlotService {
             List<String> meds = slot.getMedicines().stream()
                     .map(sm -> sm.getPrescriptionMedicine().getMedicine().getName())
                     .collect(Collectors.toList());
-            return new MsDto.DailySlotResponse.SlotDto(slot.getId(), slot.getSlotTime().name(), Boolean.TRUE.equals(slot.getTaken()), meds);
+
+            String timeText = getUserSlotTimeText(user, slot.getSlotTime());
+
+            return MsDto.DailySlotResponse.SlotDto.builder()
+                    .slotId(slot.getId())
+                    .slotTime(slot.getSlotTime().name())
+                    .timeText(timeText)
+                    .taken(Boolean.TRUE.equals(slot.getTaken()))
+                    .medicineNames(meds)
+                    .build();
         }).collect(Collectors.toList());
 
         return new MsDto.DailySlotResponse(date.toString(), result);
     }
+
 
 
     @Transactional

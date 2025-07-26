@@ -21,7 +21,9 @@ public class AuthRequestDTO {
         private String phone;
         private LocalDateTime sleepStartTime;
         private LocalDateTime sleepEndTime;
-        private String mealTimes;
+        private String morningTime; // "08:00"
+        private String lunchTime;   // "13:00"
+        private String eveningTime; // "19:00"
         private Gender gender;
     }
 

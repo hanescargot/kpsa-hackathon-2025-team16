@@ -16,7 +16,10 @@ import java.time.LocalDateTime;
 public class NormalUser extends BaseUser {
     private LocalDateTime sleepStartTime;
     private LocalDateTime sleepEndTime;
-    private String mealTimes;
+
+    private String morningTime; // 예: "08:00"
+    private String lunchTime;   // 예: "13:00"
+    private String eveningTime; // 예: "19:00"
 
     @Builder.Default
     private Long point = 0L;

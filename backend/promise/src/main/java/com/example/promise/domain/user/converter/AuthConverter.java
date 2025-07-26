@@ -20,7 +20,9 @@ public class AuthConverter {
                 .phone(dto.getPhone())
                 .sleepStartTime(dto.getSleepStartTime())
                 .sleepEndTime(dto.getSleepEndTime())
-                .mealTimes(dto.getMealTimes())
+                .morningTime(dto.getMorningTime())     // 🔹 여기서 시간 저장
+                .lunchTime(dto.getLunchTime())
+                .eveningTime(dto.getEveningTime())
                 .gender(dto.getGender())
                 .activity(Activity.ACTIVITY)
                 .role(UserRole.USER)

@@ -40,9 +40,11 @@ public class MsDto {
         @Getter @Setter
         @AllArgsConstructor
         @NoArgsConstructor
+        @Builder
         public static class SlotDto {
             private Long slotId;
             private String slotTime; // "MORNING" 등
+            private String timeText;
             private boolean taken;
             private List<String> medicineNames;
         }
