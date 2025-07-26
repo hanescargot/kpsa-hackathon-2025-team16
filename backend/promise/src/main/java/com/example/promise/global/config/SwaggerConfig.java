@@ -15,8 +15,8 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI UMCstudyAPI() {
         Info info = new Info()
-                .title("혼자옵서예 백엔드")
-                .description("혼자옵서예 백엔드 API 명세서")
+                .title("약속이 백엔드")
+                .description("약속이 백엔드 API 명세서")
                 .version("1.0.0");
 
         String jwtSchemeName = "JWT TOKEN";

@@ -4,8 +4,6 @@ package com.example.promise.global.config;
 
 import com.example.promise.global.code.status.ErrorStatus;
 import com.example.promise.global.security.JwtAuthenticationFilter;
-import com.example.promise.global.security.oauth.CustomOAuth2UserService;
-import com.example.promise.global.security.oauth.OAuth2LoginSuccessHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 import java.util.Map;
 
+
 @Configuration
 @EnableMethodSecurity
 @EnableWebSecurity
@@ -43,8 +42,7 @@ public class WebSecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, CustomOAuth2UserService customOAuth2UserService,
-                                                          OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.httpBasic(basic -> basic.disable());
@@ -91,11 +89,6 @@ public class WebSecurityConfig {
             });
         });
 
-        http.oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                .successHandler(oAuth2LoginSuccessHandler)
-        );
-
 
         return http.build();
     }
@@ -108,12 +101,7 @@ public class WebSecurityConfig {
         List<String> allowedOrigins = List.of(
                 "http://localhost:8080",
                 "http://localhost:5173",
-                "ws://localhost:8080",
-                "http://13.209.210.46:8080",
-                "ws://13.209.210.46:8080",
-                "http://localhost:3000",
-                "https://financeus.netlify.app",
-                "https://financeusapi.shop"
+                "ws://localhost:8080"
         );
 
         config.setAllowedOrigins(allowedOrigins);

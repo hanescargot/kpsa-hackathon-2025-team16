@@ -7,20 +7,27 @@ import com.example.promise.domain.guardian.entity.Guardian;
 import com.example.promise.domain.pharmacist.entity.Pharmacist;
 import com.example.promise.domain.prescription.entity.Prescription;
 import com.example.promise.domain.user.entity.status.Activity;
-import com.example.promise.domain.user.entity.status.MealPattern;
+import com.example.promise.domain.user.entity.status.Gender;
+import com.example.promise.domain.user.entity.status.MealTime;
 import com.example.promise.domain.user.entity.status.UserRole;
 import com.example.promise.global.common.BaseEntity;
+
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Setter
 public class User extends BaseEntity {
 
     @Id
@@ -39,9 +46,6 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(nullable = false, length = 30)
-    private String nickname;
-
     @Column(nullable = false)
     private LocalDate birthDate;
 
@@ -53,17 +57,25 @@ public class User extends BaseEntity {
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    private MealPattern mealPattern;
+    private Gender gender;
 
     @Column
-    private Float sleepHours;
+    private LocalDateTime sleepStartTime;
 
-    private Long point;
+    @Column
+    private LocalDateTime sleepEndTime;
+
+    @Builder.Default
+    private Long point=0L;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
     private Activity activity= Activity.ACTIVITY;
+
+    @Column(name = "meal_times")
+    private String mealTimes;  // 예: "BREAKFAST,LUNCH"
+
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Pharmacist pharmacist;
