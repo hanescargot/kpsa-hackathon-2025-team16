@@ -81,7 +81,7 @@ class _UserInfoScreenState extends ConsumerState<NewUserInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF99C2FF),
+      backgroundColor: const Color(0xFFC8DEFF),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

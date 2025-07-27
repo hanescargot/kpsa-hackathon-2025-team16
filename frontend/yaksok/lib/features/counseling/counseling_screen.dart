@@ -1,140 +1,188 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-class ConsultationScreen extends StatelessWidget {
-  const ConsultationScreen({super.key});
+import 'package:flutter/material.dart';
+import '../../util.dart';
+import 'chatting_screen.dart';
+import 'message_history.dart';
+
+class PharmacistConsultRequestPage extends StatelessWidget {
+  const PharmacistConsultRequestPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final pharmacists = [
-      {'name': 'OO 약국 OOO 약사', 'image': 'https://via.placeholder.com/150'},
-      {
-        'name': 'OO 약국 OOO 약사',
-        'image': 'https://via.placeholder.com/150/000000/FFFFFF',
-      },
-    ];
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFF6B6B),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // 상단 타이틀
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Row(
-                children: const [
-                  Text(
-                    '약속이',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+            /// 메인 콘텐츠
+            Column(
+              children: [
+                const SizedBox(height: 40),
+
+                /// 상단 제목 + 로고
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/logo/logo_rmbg.png', height: 48),
+                    const SizedBox(width: 8),
+                    Text(
+                      '약사 상담 요청',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'MapleStory',
+                        color: kColorPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                /// 필터 설정 박스
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: kColorPrimary, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 12),
-                  Icon(Icons.local_hospital, color: Colors.white),
-                ],
-              ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '필터 설정',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _OutlinedFilterButton(label: '거리순'),
+                          _OutlinedFilterButton(label: '응답률'),
+                          _OutlinedFilterButton(label: '별점높은순'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// 상담 리스트
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 4,
+                    itemBuilder: (context, index) {
+                      final random = Random();
+                      final imageNumber = random.nextInt(3) + 1; // 1 ~ 3
+                      return _PharmacistCard(
+                        imagePath: 'assets/imgs/ph$imageNumber.png',
+                        pharmacyName: 'OO약국',
+                        pharmacistName: '홍길동',
+                        empathy: '서울시 성동구',
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 80),
+              ],
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                '약사 상담',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+
+            /// 닫기 버튼
+            Positioned(
+              top: 12,
+              right: 12,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(color: Colors.black26, blurRadius: 4),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: const Icon(Icons.close, color: Colors.black),
                 ),
               ),
             ),
-            const SizedBox(height: 12),
 
-            // 필터 버튼
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            /// 하단 상담요청 / 기록보기 버튼
+            Positioned(
+              bottom: 24,
+              left: 16,
+              right: 16,
               child: Row(
                 children: [
-                  _FilterButton(label: '필터 설정'),
-                  _FilterButton(label: '거리순'),
-                  _FilterButton(label: '응답률순'),
-                  _FilterButton(label: '나의 약국'),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // 약사 카드 리스트
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: pharmacists.length,
-                itemBuilder: (context, index) {
-                  final pharmacist = pharmacists[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(pharmacist['image']!),
-                          radius: 30,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            pharmacist['name']!,
-                            style: const TextStyle(fontSize: 16),
+                  // Expanded(
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       // TODO: 상담 요청 기능
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: kColorPrimary,
+                  //       padding: const EdgeInsets.symmetric(vertical: 16),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(16),
+                  //       ),
+                  //     ),
+                  //     child: const Text(
+                  //       '상담 요청',
+                  //       style: TextStyle(
+                  //         fontSize: 16,
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Colors.white,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ConsultationRecordPage(),
                           ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: kColorPrimary, width: 2),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ],
+                      ),
+                      child: Text(
+                        '상담 기록 보기',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: kColorPrimary,
+                        ),
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // 안내 문구
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                '클릭하시면 해당 약사님과의 채팅방이 생성됩니다.',
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // 채팅 바로가기 아이콘들
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
-                  _ChatIcon(label: '나의 채팅방'),
-                  _ChatIcon(label: '이전 상담내역'),
+                  ),
                 ],
               ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // 하단 네비게이션
-            Container(
-              height: 56,
-              decoration: const BoxDecoration(color: Colors.white),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: Center(
-                  child: Icon(Icons.home, size: 28, color: Colors.black),
-                ),
-              ),
-              // child: const Center(child: Icon(Icons.home, size: 28, color: Colors.black)),
             ),
           ],
         ),
@@ -143,41 +191,104 @@ class ConsultationScreen extends StatelessWidget {
   }
 }
 
-class _FilterButton extends StatelessWidget {
+class _OutlinedFilterButton extends StatelessWidget {
   final String label;
 
-  const _FilterButton({required this.label});
+  const _OutlinedFilterButton({required this.label});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: Colors.white,
-          side: const BorderSide(color: Colors.black12),
-        ),
-        onPressed: () {},
-        child: Text(label),
+    return OutlinedButton(
+      onPressed: () {},
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: kColorPrimary, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        foregroundColor: kColorPrimary,
       ),
+      child: Text(label, style: const TextStyle(fontSize: 14)),
     );
   }
 }
 
-class _ChatIcon extends StatelessWidget {
-  final String label;
+class _PharmacistCard extends StatelessWidget {
+  final String imagePath;
+  final String pharmacyName;
+  final String pharmacistName;
+  final String empathy;
 
-  const _ChatIcon({required this.label});
+  const _PharmacistCard({
+    required this.imagePath,
+    required this.pharmacyName,
+    required this.pharmacistName,
+    required this.empathy,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 32),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: Colors.white)),
-      ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: kColorPrimary, width: 1),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(radius: 28, backgroundImage: AssetImage(imagePath)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      pharmacyName,
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Spacer(),
+                    Container(
+                      // color: Colors.blue.shade100,
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue, width: 1.5),
+                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.blue.shade100,
+                      ),
+                      child: InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const PharmacistChatScreen()));
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.send, color: Colors.blue, size: 12),
+                            Text(" 상담 요청 ", style: TextStyle(color: Colors.blue)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(pharmacistName, style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 4),
+                Text(
+                  empathy,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.blueAccent,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -136,7 +136,9 @@ class ImagePreviewScreen extends StatelessWidget {
 
                             if (context.mounted) {
                               Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-                              Navigator.of(context).push(
+                              Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
+
+                          Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => OcrResultScreen(
                                     result: OcrResult.fromJson(result),

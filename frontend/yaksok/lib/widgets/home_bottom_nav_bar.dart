@@ -62,7 +62,7 @@ class _NavIcon extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const CameraGuideScreen()));
         break;
       case 3:
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const ConsultationScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const PharmacistConsultRequestPage()));
         break;
       case 4:
         Navigator.push(context, MaterialPageRoute(builder: (_) => const MyPageScreen()));
