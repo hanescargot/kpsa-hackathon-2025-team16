@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### Google Cloud Credential 파일 무시 ###
+google-credential.json
+src/main/resources/google-credential.json
